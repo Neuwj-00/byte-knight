@@ -1,0 +1,41 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Architectures: amd64
+Codename: stable
+Date: Sun, 29 Mar 2026 07:58:36 +0000
+Label: RepoForge
+Origin: RepoForge
+Suite: stable
+MD5Sum:
+ 9e2a8652ae8ba6d3094371a791e305a1              125 Release
+ 575b9badbe18987d33a35d22292454c5             2483 main/binary-amd64/Packages
+ 402eee2b5675333aee5052e1e59b1067             1087 main/binary-amd64/Packages.gz
+SHA1:
+ 8bde51dc065ab6bd1762f0c2e104e41ecb15978a              125 Release
+ 7af89edb185ebb58318e21b3ea951cc2abb659f5             2483 main/binary-amd64/Packages
+ 1ff4fad29b0cb1e9bcb7855422ec475fd2f01191             1087 main/binary-amd64/Packages.gz
+SHA256:
+ f3784d0e7a8e51aa9fb6ebc31f54682ed5da90776359b6ce7ce751a09507fef2              125 Release
+ d4eb400686e9fb849d837019853f360c3e77529a83ec1873c3baadbdbda29c3c             2483 main/binary-amd64/Packages
+ 9e804f8b0039b61c56067c5df9699a17499e70dd8056eb296bd2b6bc2567c8ef             1087 main/binary-amd64/Packages.gz
+SHA512:
+ 0c9c13ffe6d05f178b1b7f5ea2563cf019d3cfc47bdb0d9986b0e4c51e97fd3534ac570641c6f9bebf8564662a921f00b2fedae3260011d25b888f7213694313              125 Release
+ 8e9788b71aca11b55037050109ac24c8038d8c776d2773e9a3122c1ccff17292c17aa02882f91040e5d8f6939737ec0e28268f356255489d6a406c57056fb767             2483 main/binary-amd64/Packages
+ 2a4fb559965bea5468ce836046b553de693fdbeda0879074b8501bc30fb0e911d2c29607dbcbc49aa89671f4acd696f27c00080920f624e761e6190a607f4f0e             1087 main/binary-amd64/Packages.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEjsrQFzplhsoSuQrLIL/QLvRgoWIFAmnJRp8ACgkQIL/QLvRg
+oWIhBhAAiyBFKeY4Te2iERtSY6SzLfkwtiSPIe8VtACjoZ2OQPCGuT/HK0hYyJf/
+qMfgWJJSetEiw8PVJXxtEutJJ9CpSaVxoJjO6NANYpE2UoSTpnGg3YZDnso3YnM2
+rgKtSZi8TsExDCzMcm0pd0rt0WYwxm5MwSqIWjORne+nw61x90OePb39/iZX0n0o
+mpctbiKYOEHYuT7CpGhoe+xFGdv2TOOceGIs76qTGImjBMBVBmBl7hEKaLJhbx5Z
+FBsx4enN+q5vCzIoloMVuhunZh3kzaYDJv366wuXqikh0/E/FPQjW4+RuTTqMyob
+KB1orxYHw99OHDL0BhmdDqiTLIvoRdx1u3I6Ec5BNLD+TGuXaWMfP1IebFmiWHsJ
+7q7K+OBYtrGzCihHgWo9uw3/yhD2xgGougmA12Af45/lH9Gvw9BedyCqy2ifGJwm
+bomswYDkhpCH9CSbN/aNZENju4OlLceXAby58mX7B549pOzM82gYSzJ6e/XMmYRe
+e/mqMuJWpV0ekCL1s/3RrVbCOE/9B7IAap3A9eHkiOVCDZKbdg5psbAtSkf9PTWQ
+ZIRW/ad2Oc7ie4HH8FZ9lenZjFR149mdfSzgqv/ChzV0IIhqwUriLZOdky85myIH
+mj7SNYBaNX77JDeU0bGeIT4J8t/fwdy4HCdFJpr+9B3oYdptexE=
+=qLHh
+-----END PGP SIGNATURE-----
