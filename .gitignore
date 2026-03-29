@@ -1,0 +1,9 @@
+# Security
+*.sec
+*.sk
+*private*.key
+
+# Temp
+*.log
+*.tmp
+.repodata.old/
