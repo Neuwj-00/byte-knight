@@ -2,7 +2,7 @@
 
 Byte Knight is a user-friendly TUI (Terminal User Interface) application designed to easily install, configure, and manage the **Cloudflare WARP CLI**. 
 
-This project was originally created by [Neuwj](https://github.com/Neuwj/byte-knight) to simplify Cloudflare WARP management for Debian and RHEL-based systems. This fork extends the support and brings the ability to compile and run Byte Knight on **Arch Linux** and Arch-based distributions (like CachyOS).
+This project was originally created by [Neuwj](https://github.com/Neuwj/byte-knight) and Forked by [Vniverse77](https://github.com/Vniverse77/) to simplify Cloudflare WARP management for Debian and RHEL-based systems. This fork extends the support and brings the ability to compile and run Byte Knight on **Arch Linux** and Arch-based distributions (like CachyOS).
 
 ---
 
@@ -23,9 +23,8 @@ Pre-built packages are located in the `debian` directory. You can install the `.
 Pre-built packages are located in the `rpm` directory. You can install the `.rpm` package using `rpm` or `dnf`.
 
 ### 3. Arch Linux / CachyOS (Manual Compilation)
-Since you are on Arch, you can compile the project directly from the source. Make sure you have the necessary base development tools installed.
+Since you are on Arch, We have recently added [AUR](https://aur.archlinux.org/packages/pacforge) repository to install easyly on your arch based deviceses!
 
 #### Prerequisites
-Open your terminal and install the build essentials:
-```bash
-sudo pacman -S base-devel cmake
+Open your terminal and install
+yay -S pacforge
