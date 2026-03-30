@@ -1,4 +1,3 @@
-# Byte Knight 
 
 Byte Knight is a user-friendly TUI (Terminal User Interface) application designed to easily install, configure, and manage the **Cloudflare WARP CLI**. 
 
@@ -28,3 +27,4 @@ Since you are on Arch, We have recently added [AUR](https://aur.archlinux.org/pa
 #### Prerequisites
 Open your terminal and install
 yay -S pacforge
+
