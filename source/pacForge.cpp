@@ -30,8 +30,8 @@ void printBanner() {
     clearScreen();
     std::cout << BOLD << BLUE << "=================================================\n" << RESET;
     std::cout << BOLD << YELLOW << "   .===.   " << RESET << BOLD << "PACKAGE FORGE\n";
-    std::cout << BOLD << YELLOW << "   | " << CYAN << "+" << YELLOW << " |   " << RESET << "C++ Packaging Wizard | v0.1.0\n";
-    std::cout << BOLD << YELLOW << "    \\ /    " << CYAN << "Created by Neuwj - neuwj@bk.ru\n";
+    std::cout << BOLD << YELLOW << "   | " << CYAN << "+" << YELLOW << " |   " << RESET << "C++ Packaging Wizard | v1.0.2\n";
+    std::cout << BOLD << YELLOW << "    \\ /    " << CYAN << "Created by Vniverse77 - vniverse77@protonmail.com\n";
     std::cout << BOLD << YELLOW << "     V     " << RESET << "\n";
     std::cout << BOLD << BLUE << "=================================================\n" << RESET;
     std::cout << CYAN << " Tip: Type '0' anytime to open the Example Guide!\n\n" << RESET;
@@ -471,7 +471,7 @@ void buildRPM() {
 void printOutro() {
     std::cout << "\n" << BOLD << BLUE << "=================================================\n" << RESET;
     std::cout << BOLD << GREEN << "  Thank you for using Package Forge!\n" << RESET;
-    std::cout << CYAN << "  Made by Neuwj\n" << RESET;
+    std::cout << CYAN << "  Made by Vniverse77\n" << RESET;
     std::cout << BOLD << BLUE << "=================================================\n\n" << RESET;
 }
 
