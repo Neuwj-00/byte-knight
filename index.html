@@ -3,7 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Vniverse77/byte-knight | Official Repository</title>
+        <title>Byte Knight | Official Repository</title>
+        <link rel="icon" type="image/svg+xml" href="https://github.githubassets.com/favicons/favicon.svg">
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {
@@ -111,6 +112,21 @@
             .markdown-body li strong {
                 font-weight: 600;
             }
+
+            /* Profesyonel Vektörel Donut Animasyonları */
+            .donut-slice {
+                transition: stroke-width 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                            opacity 0.3s ease, 
+                            stroke-dasharray 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                            filter 0.2s ease;
+                transform-origin: center;
+            }
+            .donut-svg:hover .donut-slice:not(:hover) {
+                opacity: 0.15;
+            }
+            .donut-slice:hover {
+                stroke-width: 7.5;
+            }
         </style>
     </head>
     <body
@@ -134,12 +150,8 @@
                     ></path>
                 </svg>
                 <div class="text-sm font-semibold flex items-center gap-2">
-                    <a href="#" class="text-gh-link hover:underline"
-                        >Vniverse77</a
-                    >
-                    <span class="text-gh-muted">/</span>
-                    <a href="#" class="text-gh-text hover:underline font-bold"
-                        >byte-knight</a
+                    <span class="text-gh-text hover:underline cursor-pointer font-bold text-base"
+                        >Byte Knight</span
                     >
                     <span
                         class="border border-gh-border text-gh-muted px-2 py-0.5 rounded-full text-xs font-medium ml-2"
@@ -204,7 +216,7 @@
                             licensed under the
                             <strong>GNU General Public License v3.0</strong>.
                             Forked and maintained by
-                            <strong>Vniverse77</strong>.
+                            <strong>Neuwj</strong>.
                         </p>
 
                         <h2>Installation</h2>
@@ -360,8 +372,8 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                             If you encounter any bugs, have feature requests, or
                             need support for different Linux distributions, feel
                             free to reach out! You can contact me directly at
-                            <a href="mailto:vniverse77@gmail.com"
-                                ><strong>vniverse77@protonmail.com</strong></a
+                            <a href="mailto:neuwj@bk.ru"
+                                ><strong>neuwj@bk.ru</strong></a
                             >.
                         </p>
 
@@ -401,9 +413,10 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                     </svg>
                     <a
                         id="repo-link"
-                        href="https://neuwj-00.github.io/byte-knight"
+                        href="https://github.com/Neuwj-00/byte-knight"
+                        target="_blank"
                         class="text-gh-link hover:underline truncate"
-                        >neuwj-00.github.io/byte-knight</a
+                        >github.com/Neuwj-00/byte-knight</a
                     >
                 </div>
 
@@ -423,11 +436,24 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                             >Loading languages...</span
                         >
                     </div>
-                    <div class="mt-6 mb-2 flex justify-center">
-                        <div
-                            id="lang-donut"
-                            class="w-36 h-36 rounded-full relative hidden shadow-lg border border-gh-border transition-transform hover:scale-105 duration-300"
-                        ></div>
+                    
+                    <!-- Profesyonel Donut Wrapper -->
+                    <div id="donut-wrapper" class="relative w-40 h-40 mx-auto mt-8 mb-6 hidden group">
+                        <div id="lang-donut" class="w-full h-full relative z-10 transition-transform group-hover:scale-105 duration-500 drop-shadow-xl"></div>
+                        <!-- Merkeze gelen interaktif metin -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center z-0 pointer-events-none">
+                            <span id="center-lang" class="text-[11px] text-gh-muted font-medium transition-colors duration-200 uppercase tracking-wider">Total</span>
+                            <span id="center-pct" class="text-xl text-gh-text font-bold transition-all duration-200 mt-0.5">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gh-border pt-4 mt-4">
+                    <h3 class="text-sm font-semibold mb-3">Other Repositories</h3>
+                    <div id="all-repos" class="flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                        <span class="text-sm text-gh-muted"
+                            >Loading repositories...</span
+                        >
                     </div>
                 </div>
             </div>
@@ -455,7 +481,7 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                 </div>
                 <div class="flex flex-wrap justify-center gap-4">
                     <span
-                        >Vniverse77 - Linux Developer & Experienced
+                        >Neuwj - Linux Developer & Experienced
                         Developer</span
                     >
                 </div>
@@ -464,21 +490,13 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
 
         <script>
             async function fetchRepoData() {
-                const repo = "Vniverse77/byte-knight";
+                const repo = "Neuwj-00/byte-knight";
                 try {
                     const repoRes = await fetch(
                         `https://api.github.com/repos/${repo}`,
                     );
                     if (repoRes.ok) {
                         const repoData = await repoRes.json();
-                        if (repoData.homepage) {
-                            const linkEl = document.getElementById("repo-link");
-                            linkEl.href = repoData.homepage;
-                            linkEl.innerText = repoData.homepage.replace(
-                                /^https?:\/\//,
-                                "",
-                            );
-                        }
                     }
 
                     const releaseRes = await fetch(
@@ -520,44 +538,144 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                                 HTML: "#e34c26",
                             };
 
-                            let gradientStops = [];
-                            let currentPercent = 0;
+                            let svgHTML = `<svg width="100%" height="100%" viewBox="0 0 42 42" class="donut-svg overflow-visible">`;
+                            // Arka plan izi (track)
+                            svgHTML += `<circle cx="21" cy="21" r="15.91549431" fill="transparent" stroke="#30363d" stroke-width="1.5" opacity="0.4"></circle>`;
+                            
+                            let currentOffset = 25; // Başlangıç yönü (Saat 12)
+                            let slicesHTML = '';
+                            const gap = 1.2; // Dilimler arası estetik boşluk
 
-                            for (const [lang, bytes] of Object.entries(
-                                langData,
-                            )) {
-                                const percent = (
-                                    (bytes / totalBytes) *
-                                    100
-                                ).toFixed(1);
+                            // En yüksek yüzdeye sahip dili merkezde tutmak için sırala
+                            let entries = Object.entries(langData).sort((a,b) => b[1] - a[1]);
+                            let topLang = entries[0][0];
+                            let topPct = ((entries[0][1] / totalBytes) * 100).toFixed(1);
+
+                            for (const [lang, bytes] of entries) {
+                                const percent = (bytes / totalBytes) * 100;
                                 const color = colors[lang] || "#8b949e";
+                                
+                                // Çok küçük dilimler için boşluğu iptal et ki kaybolmasınlar
+                                const dash = percent > gap ? percent - gap : percent;
 
                                 langHTML += `
-                            <li class="flex items-center gap-2 text-sm">
-                                <span class="w-2 h-2 rounded-full" style="background-color: ${color}"></span>
-                                <span class="text-gh-text font-semibold">${lang}</span>
-                                <span class="text-gh-muted ml-auto">${percent}%</span>
+                            <li class="flex items-center gap-2 text-sm group/item">
+                                <span class="w-2.5 h-2.5 rounded-full transition-transform group-hover/item:scale-125 duration-200 shadow-sm" style="background-color: ${color}"></span>
+                                <span class="text-gh-text font-semibold group-hover/item:text-white transition-colors">${lang}</span>
+                                <span class="text-gh-muted ml-auto font-mono text-xs">${percent.toFixed(1)}%</span>
                             </li>`;
 
-                                const nextPercent =
-                                    currentPercent + parseFloat(percent);
-                                gradientStops.push(
-                                    `${color} ${currentPercent}% ${nextPercent}%`,
-                                );
-                                currentPercent = nextPercent;
+                                slicesHTML += `
+                                    <circle class="donut-slice cursor-pointer outline-none"
+                                        cx="21" cy="21" r="15.91549431" fill="transparent"
+                                        stroke="${color}" stroke-width="4.5"
+                                        style="color: ${color}; stroke-dasharray: 0 100;"
+                                        data-dash="${dash} ${100 - dash}"
+                                        stroke-dashoffset="${currentOffset}"
+                                        data-lang="${lang}" data-percent="${percent.toFixed(1)}"
+                                    ></circle>
+                                `;
+                                currentOffset -= percent;
                             }
                             langHTML += "</ul>";
                             langContainer.innerHTML = langHTML;
 
-                            const donutEl =
-                                document.getElementById("lang-donut");
-                            if (donutEl) {
-                                donutEl.style.background = `conic-gradient(${gradientStops.join(", ")})`;
-                                donutEl.classList.remove("hidden");
+                            const wrapperEl = document.getElementById("donut-wrapper");
+                            const donutEl = document.getElementById("lang-donut");
+                            const centerLang = document.getElementById('center-lang');
+                            const centerPct = document.getElementById('center-pct');
+
+                            if (donutEl && wrapperEl) {
+                                donutEl.innerHTML = svgHTML + slicesHTML + `</svg>`;
+                                wrapperEl.classList.remove("hidden");
+                                
+                                // Pürüzsüz dolum animasyonunu başlat
+                                setTimeout(() => {
+                                    donutEl.querySelectorAll('.donut-slice').forEach(circle => {
+                                        circle.style.strokeDasharray = circle.getAttribute('data-dash');
+                                    });
+                                }, 50);
+
+                                // Merkez yazısını başlangıçta en yüksek dile ayarla
+                                centerLang.textContent = topLang;
+                                centerPct.textContent = topPct + '%';
+                                centerPct.style.color = colors[topLang] || '';
+                                
+                                // Tooltip (Profesyonel Glassmorphism / Blur efektli)
+                                let tooltip = document.getElementById("donut-tooltip");
+                                if (!tooltip) {
+                                    tooltip = document.createElement("div");
+                                    tooltip.id = "donut-tooltip";
+                                    tooltip.className = "fixed bg-[#010409]/80 backdrop-blur-md border border-gh-border text-gh-text text-xs px-3 py-2 rounded-lg shadow-[0_8px_30px_rgb(0,0,0,0.5)] z-50 pointer-events-none transition-all duration-100 opacity-0 flex items-center gap-2 transform -translate-x-1/2 -translate-y-[150%]";
+                                    document.body.appendChild(tooltip);
+                                }
+
+                                donutEl.addEventListener('mousemove', (e) => {
+                                    if (e.target.tagName === 'circle' && e.target.classList.contains('donut-slice')) {
+                                        const lang = e.target.getAttribute('data-lang');
+                                        const percent = e.target.getAttribute('data-percent');
+                                        const color = e.target.getAttribute('stroke');
+
+                                        // Tooltip içeriği ve takibi
+                                        tooltip.innerHTML = `<span class="w-2 h-2 rounded-full shadow-sm" style="background-color: ${color}"></span><span class="font-bold text-white">${lang}</span><span class="text-gh-muted font-mono">${percent}%</span>`;
+                                        tooltip.style.left = e.clientX + 'px';
+                                        tooltip.style.top = e.clientY + 'px';
+                                        
+                                        tooltip.classList.remove('opacity-0');
+                                        tooltip.classList.add('opacity-100');
+
+                                        // Merkezi Güncelle
+                                        centerLang.textContent = lang;
+                                        centerPct.textContent = percent + '%';
+                                        centerPct.style.color = color;
+                                    } else {
+                                        tooltip.classList.remove('opacity-100');
+                                        tooltip.classList.add('opacity-0');
+                                    }
+                                });
+
+                                donutEl.addEventListener('mouseleave', () => {
+                                    tooltip.classList.remove('opacity-100');
+                                    tooltip.classList.add('opacity-0');
+                                    
+                                    // Fareden çıkıldığında merkeze en yüksek dili geri getir
+                                    centerLang.textContent = topLang;
+                                    centerPct.textContent = topPct + '%';
+                                    centerPct.style.color = colors[topLang] || '';
+                                });
                             }
                         } else {
                             langContainer.innerHTML = `<span class="text-sm text-gh-muted">No language data found</span>`;
                         }
+
+                        // Tüm repoları çek
+                        const allReposRes = await fetch('https://api.github.com/users/Neuwj-00/repos?sort=updated&per_page=100');
+                        const allReposContainer = document.getElementById("all-repos");
+                        
+                        if (allReposRes.ok) {
+                            const allReposData = await allReposRes.json();
+                            let reposHTML = '';
+                            
+                            allReposData.forEach(r => {
+                                reposHTML += `
+                                <div class="flex flex-col mb-1 border-b border-gh-border pb-2 last:border-0">
+                                    <a href="${r.html_url}" target="_blank" class="text-sm font-semibold text-gh-link hover:underline truncate flex items-center gap-1">
+                                        <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="fill-gh-muted"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"></path></svg>
+                                        ${r.name}
+                                    </a>
+                                    ${r.description ? `<span class="text-xs text-gh-muted truncate mt-1" title="${r.description}">${r.description}</span>` : ''}
+                                </div>`;
+                            });
+                            
+                            if(reposHTML === '') {
+                                allReposContainer.innerHTML = `<span class="text-sm text-gh-muted">No other repositories found</span>`;
+                            } else {
+                                allReposContainer.innerHTML = reposHTML;
+                            }
+                        } else {
+                             allReposContainer.innerHTML = `<span class="text-sm text-gh-muted">Failed to load repos</span>`;
+                        }
+
                     }
                 } catch (error) {
                     console.error("Error fetching repo data:", error);
