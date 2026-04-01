@@ -117,18 +117,16 @@
                 font-weight: 600;
             }
 
-            /* SVG Donut Interaktif Animasyonları ve Hassasiyet Ayarı */
             .donut-slice {
                 transition: stroke-width 0.2s ease, opacity 0.2s ease, stroke-dasharray 1s ease-out;
                 transform-origin: center;
-                /* Sadece ve sadece tam çizginin üstüne gelindiğinde tetiklenmesini sağlar (İçteki boşluğu yoksayar) */
                 pointer-events: stroke;
             }
             .donut-svg:hover .donut-slice:not(:hover) {
-                opacity: 0.3; /* Odaklanmayanları soluklaştır */
+                opacity: 0.3;
             }
             .donut-slice:hover {
-                stroke-width: 8; /* Üzerine gelineni kalınlaştır */
+                stroke-width: 8;
             }
         </style>
     </head>
@@ -164,11 +162,9 @@
             </div>
         </header>
 
-        <!-- Mobilde sağ menünün (About) üste gelmesi için flex-col-reverse kullanıldı -->
         <main
             class="flex-grow max-w-[1012px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col-reverse md:flex-row gap-8"
         >
-            <!-- Sol Kısım (README) - Flex grow and min-w-0 fixes code block overflow on mobile -->
             <div class="flex-grow min-w-0">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold flex items-center gap-2">
@@ -399,11 +395,9 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                 </div>
             </div>
 
-            <!-- Sağ Sidebar (Mobilde üste çıkar) -->
             <div class="w-full md:w-[296px] flex-shrink-0">
                 <h3 class="text-base font-semibold mb-4">About</h3>
 
-                <!-- Profil ve UTC+3 Saat Alanı -->
                 <div class="flex items-center gap-3 mb-4">
                     <a href="https://github.com/Neuwj-00" target="_blank" class="flex-shrink-0">
                         <img src="https://github.com/Neuwj-00.png" onerror="this.src='https://ui-avatars.com/api/?name=Neuwj&background=161b22&color=fff'" alt="Neuwj" class="w-12 h-12 rounded-full border border-gh-border hover:border-gh-muted transition-colors">
@@ -513,15 +507,12 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
         </footer>
 
         <script>
-            // UTC+3 Saati Zorlayan ve Gösteren Fonksiyon
             function updateTime() {
                 const timeDisplay = document.getElementById('time-display');
                 if (!timeDisplay) return;
 
                 const now = new Date();
 
-                // Kullanıcının PC saatinden bağımsız olarak zorunlu UTC+3 (Istanbul/Moscow Time) çekiliyor
-                // hour12: false ile Avrupa/Rusya standartı olan 24 saat formatı kullanılıyor (Örn: 14:30)
                 const options = {
                     hour: '2-digit',
                     minute: '2-digit',
@@ -531,14 +522,12 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
 
                 const timeString = now.toLocaleTimeString('en-US', options);
 
-                // Saatin yanına Rusyadaki misafir için küçük bir UTC+3 ibaresi ekliyoruz
                 timeDisplay.innerHTML = `${timeString} <span class="text-[10px] ml-1.5 font-mono text-gh-muted border border-gh-border px-1 rounded-sm bg-gh-card">UTC+3</span>`;
             }
 
             async function fetchRepoData() {
                 const repo = "Neuwj-00/byte-knight";
                 try {
-                    // Release Data
                     const releaseRes = await fetch(
                         `https://api.github.com/repos/${repo}/releases/latest`,
                     );
@@ -555,7 +544,6 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                         releaseContainer.innerHTML = `<span class="text-sm text-gh-muted">No releases published</span>`;
                     }
 
-                    // Languages Data & SVG Interactive Donut Chart
                     const langRes = await fetch(
                         `https://api.github.com/repos/${repo}/languages`,
                     );
@@ -617,7 +605,6 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                                 donutEl.innerHTML = svgHTML + slicesHTML + `</svg>`;
                                 donutEl.classList.remove("hidden");
 
-                                // Animasyon Tetikleyici
                                 setTimeout(() => {
                                     donutEl.querySelectorAll('.donut-slice').forEach(circle => {
                                         circle.style.strokeDasharray = circle.getAttribute('data-dash');
@@ -633,7 +620,6 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                                 }
 
                                 donutEl.addEventListener('mousemove', (e) => {
-                                    // Sadece stroke (renkli çizgi) üzerinde tetiklenir
                                     if (e.target.tagName === 'circle' && e.target.classList.contains('donut-slice')) {
                                         const lang = e.target.getAttribute('data-lang');
                                         const percent = e.target.getAttribute('data-percent');
@@ -661,7 +647,6 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                         }
                     }
 
-                    // Diğer Repolar
                     const allReposRes = await fetch('https://api.github.com/users/Neuwj-00/repos?sort=updated&per_page=100');
                     const allReposContainer = document.getElementById("all-repos");
 
@@ -697,7 +682,7 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
             document.addEventListener("DOMContentLoaded", () => {
                 fetchRepoData();
                 updateTime();
-                setInterval(updateTime, 60000); // Saati her dakika yenile
+                setInterval(updateTime, 60000);
             });
 
             function copyToClipboard(elementId, btnElement) {
