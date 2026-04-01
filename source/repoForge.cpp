@@ -10,6 +10,8 @@
 #include <array>
 #include <memory>
 #include <cstdio>
+#include <atomic>
+#include <map>
 
 namespace fs = std::filesystem;
 
@@ -22,6 +24,8 @@ const std::string YELLOW = "\033[33m";
 const std::string RED = "\033[31m";
 const std::string CYAN = "\033[36m";
 
+static std::atomic<bool> g_shouldExit{false};
+
 void clearScreen() {
     std::system("clear");
 }
@@ -33,13 +37,13 @@ void sleepMs(int ms) {
 void waitForEnter() {
     std::cout << "\n" << CYAN << "Press [ENTER] to continue..." << RESET;
     std::string dummy;
-    std::getline(std::cin, dummy);
+    if (!std::getline(std::cin, dummy)) std::exit(0);
 }
 
 void showExitMessage() {
     clearScreen();
     std::cout << BOLD << BLUE << "=================================================\n" << RESET;
-    std::cout << BOLD << GREEN << "  Thank you for using repoForge\n" << RESET;
+    std::cout << BOLD << GREEN << "  Thank you for using Repo Forge\n" << RESET;
     std::cout << BOLD << CYAN << "  Developer: Neuwj\n" << RESET;
     std::cout << BOLD << CYAN << "  Contact:   neuwj@bk.ru\n" << RESET;
     std::cout << BOLD << BLUE << "=================================================\n" << RESET;
@@ -47,8 +51,7 @@ void showExitMessage() {
 }
 
 void handleSigint(int sig) {
-    showExitMessage();
-    std::exit(0);
+    g_shouldExit.store(true);
 }
 
 std::string execCommand(const std::string& cmd) {
@@ -64,11 +67,14 @@ std::string execCommand(const std::string& cmd) {
     return result;
 }
 
-bool isDirEmpty(const std::string& path) {
+bool isDirEmpty(const std::string& path, bool& errorOccurred) {
+    errorOccurred = false;
     try {
         if (!fs::exists(path)) return true;
         return fs::directory_iterator(path) == fs::directory_iterator();
-    } catch (...) {
+    } catch (const std::exception& e) {
+        std::cout << RED << "[-] ERROR: Cannot access directory: " << path << " — " << e.what() << RESET << "\n";
+        errorOccurred = true;
         return true;
     }
 }
@@ -100,6 +106,20 @@ std::string escapeShellArg(const std::string& arg) {
     return escaped;
 }
 
+std::string sanitizePkgField(const std::string& input) {
+    std::string sanitized;
+    for (char c : input) {
+        if (c == '"' || c == '\'' || c == '`' || c == '$' ||
+            c == '\\' || c == ';' || c == '&' || c == '|' ||
+            c == '(' || c == ')' || c == '{' || c == '}' ||
+            c == '<' || c == '>' || c == '\n' || c == '\r') {
+            continue;
+            }
+            sanitized += c;
+    }
+    return sanitized;
+}
+
 bool isValidPkgName(const std::string& name) {
     if (name.empty()) return false;
     for (char c : name) {
@@ -108,15 +128,22 @@ bool isValidPkgName(const std::string& name) {
     return true;
 }
 
+const std::map<std::string, std::string> LICENSE_MAP = {
+    {"1", "GPL"},     {"2", "GPL3"},    {"3", "MIT"},
+    {"4", "Apache"},  {"5", "BSD"},     {"6", "ISC"},
+    {"7", "Unlicense"}, {"8", "Python"}, {"9", "Ruby"},
+    {"10", "Zlib"}
+};
+
 void printBanner() {
     clearScreen();
     std::cout << BOLD << BLUE << "=================================================\n" << RESET;
     std::cout << BOLD << YELLOW << "   .===.   " << RESET << BOLD << "repoForge\n";
-    std::cout << BOLD << YELLOW << "   | " << CYAN << "*" << YELLOW << " |   " << RESET << "Automated Repository Indexer | v0.0.9\n";
+    std::cout << BOLD << YELLOW << "   | " << CYAN << "*" << YELLOW << " |   " << RESET << "Automated Repository Indexer | v0.1.1\n";
     std::cout << BOLD << YELLOW << "    \\ /    " << CYAN << "Made by Neuwj - neuwj@bk.ru\n";
     std::cout << BOLD << YELLOW << "     V     " << RESET << "\n";
     std::cout << BOLD << BLUE << "=================================================\n" << RESET;
-    std::cout << CYAN << " System: APT, DNF, Pacman (Arch) & AUR (Docker) Ready!\n\n" << RESET;
+    std::cout << CYAN << " System: APT, DNF, & AUR Ready!\n\n" << RESET;
 }
 
 void printError(const std::string& message) {
@@ -136,7 +163,11 @@ std::string askInput(const std::string& question, bool isRequired = true, bool i
     std::string input;
     while (true) {
         std::cout << YELLOW << question << ": " << RESET;
-        std::getline(std::cin, input);
+
+        if (!std::getline(std::cin, input)) {
+            std::exit(0);
+        }
+
         if (isPath) input = cleanPath(input);
         else {
             size_t first = input.find_first_not_of(" \t");
@@ -153,20 +184,24 @@ std::string askInput(const std::string& question, bool isRequired = true, bool i
     }
 }
 
-
 void handleAUR() {
     clearScreen();
     std::cout << BOLD << CYAN << "============================================================\n" << RESET;
     std::cout << BOLD << CYAN << "                 AUR AUTOMATION ENGINE                \n" << RESET;
     std::cout << BOLD << CYAN << "============================================================\n\n" << RESET;
 
-    if (std::system("docker info > /dev/null 2>&1") != 0) {
-        printError("Docker is not running! Please use 'sudo systemctl start docker' first.");
+    if (std::system("docker info > /dev/null 2>&1") != 0 && std::system("command -v makepkg > /dev/null 2>&1") != 0) {
+        std::cout << YELLOW << "[!] Warning: Neither makepkg nor Docker found on your system. SRCINFO generation may fail.\n" << RESET;
+        sleepMs(1500);
+    }
+
+    const char* home = std::getenv("HOME");
+    if (!home) {
+        printError("HOME environment variable is not set!");
         waitForEnter();
         return;
     }
 
-    const char* home = std::getenv("HOME");
     std::string sshDir = std::string(home) + "/.ssh";
     std::string pubKeyPath = "";
 
@@ -184,15 +219,37 @@ void handleAUR() {
         std::cout << YELLOW << "\nI couldn't find a suitable SSH key for AUR on your system.\n" << RESET;
         std::string createKey = askInput("Would you like me to generate one for you? (Y/n)", false);
         if (createKey != "n" && createKey != "N") {
-            printStep("Generating new ed25519 SSH key");
-            std::system("ssh-keygen -t ed25519 -C \"neuwj@aur.automation\" -f ~/.ssh/id_ed25519 -N \"\"");
-            pubKeyPath = sshDir + "/id_ed25519.pub";
-            printSuccess("SSH key generated successfully.");
+            if (fs::exists(sshDir + "/id_ed25519")) {
+                printError("SSH key already exists at " + sshDir + "/id_ed25519");
+                std::string overwrite = askInput("Overwrite existing key? This may break other SSH connections! (y/N)", false);
+                if (overwrite != "y" && overwrite != "Y") {
+                    std::cout << YELLOW << "[!] Using existing key instead.\n" << RESET;
+                    pubKeyPath = sshDir + "/id_ed25519.pub";
+                } else {
+                    std::string email = askInput("Your email for SSH key comment");
+                    std::string keygenCmd = "ssh-keygen -t ed25519 -C " + escapeShellArg(email) + " -f ~/.ssh/id_ed25519 -N \"\"";
+                    std::system(keygenCmd.c_str());
+                    pubKeyPath = sshDir + "/id_ed25519.pub";
+                    printSuccess("SSH key generated successfully.");
+                }
+            } else {
+                std::string email = askInput("Your email for SSH key comment");
+                std::string keygenCmd = "ssh-keygen -t ed25519 -C " + escapeShellArg(email) + " -f ~/.ssh/id_ed25519 -N \"\"";
+                std::system(keygenCmd.c_str());
+                pubKeyPath = sshDir + "/id_ed25519.pub";
+                printSuccess("SSH key generated successfully.");
+            }
         } else {
             printError("AUR operations cannot proceed without an SSH key.");
             waitForEnter();
             return;
         }
+    }
+
+    if (pubKeyPath.empty()) {
+        printError("No valid SSH key available. Operation aborted.");
+        waitForEnter();
+        return;
     }
 
     std::cout << "\n" << BOLD << BLUE << "--- AUR ACCOUNT NOTIFICATION ---\n" << RESET;
@@ -226,47 +283,146 @@ void handleAUR() {
     std::string pkgver = askInput("Version (pkgver)");
     std::string pkgdesc = askInput("Short description (pkgdesc)");
     std::string url = askInput("Project homepage (url)");
-    std::string depends = askInput("Dependencies (depends) [e.g., 'python' 'gcc']", false);
+    std::string depends = askInput("Dependencies (depends) [e.g., 'gcc-libs' 'glibc' - separate with spaces]", false);
     std::string source = askInput("Source code link (.tar.gz/.zip etc.) (source)");
+
+    std::cout << "\n" << BOLD << CYAN << "--- ARCHITECTURE SELECTION ---\n" << RESET;
+    std::cout << "  [1] x86_64  (64-bit, most common)\n";
+    std::cout << "  [2] any     (platform independent — scripts, data files)\n";
+    std::cout << "  [3] aarch64 (ARM 64-bit)\n";
+    std::string archChoice = askInput("Architecture");
+    std::string arch = "x86_64";
+    if (archChoice == "2") arch = "any";
+    else if (archChoice == "3") arch = "aarch64";
 
     std::cout << "\n" << BOLD << CYAN << "--- LICENSE SELECTION ---\n" << RESET;
     std::vector<std::string> licenses = {"GPL", "GPL3", "MIT", "Apache", "BSD", "ISC", "Unlicense", "Python", "Ruby", "Zlib"};
     for (size_t i = 0; i < licenses.size(); ++i) {
-        std::cout << "[" << i + 1 << "] " << licenses[i] << "  ";
+        std::cout << "  [" << i + 1 << "] " << licenses[i] << "  ";
         if ((i + 1) % 5 == 0) std::cout << "\n";
     }
-    std::string license = askInput("\nLicense Type (e.g., MIT)");
+    std::cout << "\n";
+    std::string licenseChoice = askInput("License (enter number 1-10 or custom name)");
+
+    std::string license;
+    auto it = LICENSE_MAP.find(licenseChoice);
+    if (it != LICENSE_MAP.end()) {
+        license = it->second;
+    } else {
+        license = licenseChoice;
+    }
+
+    std::string safePkgdesc = sanitizePkgField(pkgdesc);
+    std::string safeUrl = sanitizePkgField(url);
+    std::string safeLicense = sanitizePkgField(license);
 
     printStep("Downloading source and calculating SHA-256");
     std::string tempFile = pkgname + "_temp";
-    std::system(("wget -qO " + escapeShellArg(tempFile) + " " + escapeShellArg(source)).c_str());
-    std::string sha256 = execCommand("sha256sum " + escapeShellArg(tempFile) + " | awk '{print $1}'");
+    int wgetResult = std::system(("wget -qO " + escapeShellArg(tempFile) + " " + escapeShellArg(source)).c_str());
+
+    std::string sha256 = "SKIP";
+    if (wgetResult != 0) {
+        printError("Failed to download source from: " + source);
+        std::cout << YELLOW << "[!] SHA-256 will be set to 'SKIP' — package integrity won't be verified.\n" << RESET;
+        std::string proceed = askInput("Continue anyway? (y/N)", false);
+        if (proceed != "y" && proceed != "Y") {
+            std::system(("rm -f " + escapeShellArg(tempFile)).c_str());
+            waitForEnter();
+            return;
+        }
+    } else {
+        sha256 = execCommand("sha256sum " + escapeShellArg(tempFile) + " | awk '{print $1}'");
+        if (sha256.empty()) sha256 = "SKIP";
+    }
+
     std::system(("rm -f " + escapeShellArg(tempFile)).c_str());
-    if (sha256.empty()) sha256 = "SKIP";
+
+    std::string sourceFile = askInput("Main source file to compile (e.g., repoForge.cpp)");
+    std::string binaryName = askInput("Output binary name (e.g., repoforge)");
 
     printStep("Generating PKGBUILD and .SRCINFO");
     std::ofstream pkgbuild(pkgname + "/PKGBUILD");
-    pkgbuild << "pkgname=" << pkgname << "\npkgver=" << pkgver << "\npkgrel=1\npkgdesc=\"" << pkgdesc << "\"\n";
-    pkgbuild << "arch=('any')\nurl=\"" << url << "\"\nlicense=('" << license << "')\n";
-    if (!depends.empty()) pkgbuild << "depends=(" << depends << ")\nsource=(\"" << source << "\")\nsha256sums=('" << sha256 << "')\n";
-    pkgbuild << "\npackage() {\n  install -Dm644 \"$srcdir\" \"$pkgdir/usr/share/doc/$pkgname/README\"\n}\n";
+    pkgbuild << "# Maintainer: Auto-generated by Repo Forge\n";
+    pkgbuild << "pkgname=" << pkgname << "\n";
+    pkgbuild << "pkgver=" << pkgver << "\n";
+    pkgbuild << "pkgrel=1\n";
+    pkgbuild << "pkgdesc=\"" << safePkgdesc << "\"\n";
+    pkgbuild << "arch=('" << arch << "')\n";
+    pkgbuild << "url=\"" << safeUrl << "\"\n";
+    pkgbuild << "license=('" << safeLicense << "')\n";
+
+    if (!depends.empty()) {
+        pkgbuild << "depends=(" << depends << ")\n";
+    }
+
+    if (arch != "any") {
+        pkgbuild << "makedepends=('gcc')\n";
+    }
+
+    pkgbuild << "source=(\"" << source << "\")\n";
+    pkgbuild << "sha256sums=('" << sha256 << "')\n";
+    pkgbuild << "\n";
+
+    if (arch != "any") {
+        pkgbuild << "build() {\n";
+        pkgbuild << "    cd \"$srcdir\"\n";
+        pkgbuild << "    g++ -std=c++17 -O2 -Wl,-z,relro,-z,now -o " << binaryName << " " << sourceFile << " -lpthread\n";
+        pkgbuild << "}\n\n";
+    }
+
+    pkgbuild << "package() {\n";
+    pkgbuild << "    cd \"$srcdir\"\n";
+    if (arch != "any") {
+        pkgbuild << "    install -Dm755 " << binaryName << " \"$pkgdir/usr/bin/" << binaryName << "\"\n";
+    }
+    pkgbuild << "    if [ -f LICENSE ]; then\n";
+    pkgbuild << "        install -Dm644 LICENSE \"$pkgdir/usr/share/licenses/$pkgname/LICENSE\"\n";
+    pkgbuild << "    fi\n";
+    pkgbuild << "}\n";
     pkgbuild.close();
 
-    std::string dockerCmd = "docker run --rm -v " + escapeShellArg(fs::current_path().string() + "/" + pkgname) + ":/pkg archlinux bash -c "
-    "\"pacman -Sy --noconfirm base-devel sudo git && useradd -m builduser && chown -R builduser /pkg && "
-    "sudo -u builduser bash -c 'cd /pkg && makepkg --printsrcinfo > .SRCINFO'\"";
+    printStep("Generating .SRCINFO");
 
-    if (std::system(dockerCmd.c_str()) == 0) printSuccess(".SRCINFO generated successfully!");
-    else printError("Docker process failed!");
+    bool srcInfoGenerated = false;
+
+    if (std::system("command -v makepkg > /dev/null 2>&1") == 0) {
+        std::string localCmd = "cd " + escapeShellArg(pkgname) + " && makepkg --printsrcinfo > .SRCINFO";
+        if (std::system(localCmd.c_str()) == 0) {
+            printSuccess(".SRCINFO generated locally via makepkg.");
+            srcInfoGenerated = true;
+        }
+    }
+
+    if (!srcInfoGenerated) {
+        printStep("Local makepkg not found, using Docker fallback");
+        std::string dockerCmd = "docker run --rm -v " + escapeShellArg(fs::current_path().string() + "/" + pkgname) + ":/pkg archlinux bash -c "
+        "\"pacman -Sy --noconfirm base-devel sudo git && useradd -m builduser && chown -R builduser /pkg && "
+        "sudo -u builduser bash -c 'cd /pkg && makepkg --printsrcinfo > .SRCINFO'\"";
+
+        if (std::system(dockerCmd.c_str()) == 0) {
+            printSuccess(".SRCINFO generated via Docker.");
+            srcInfoGenerated = true;
+        } else {
+            printError("Docker process failed!");
+        }
+    }
+
+    if (!srcInfoGenerated) {
+        printError("Cannot proceed without .SRCINFO. Fix the errors above and try again.");
+        waitForEnter();
+        return;
+    }
 
     if (askInput("Push to AUR? (Y/n)", false) != "n") {
-        std::system(("cd " + pkgname + " && git add PKGBUILD .SRCINFO && git commit -m 'Automated push by Repo Forge' && git push origin master").c_str());
-        printSuccess("Package is live!");
+        std::string pushCmd = "cd " + escapeShellArg(pkgname) + " && git add PKGBUILD .SRCINFO && git commit -m 'Automated push by Repo Forge v0.1.0' && git push origin master";
+        if (std::system(pushCmd.c_str()) == 0) {
+            printSuccess("Package is live on AUR!");
+        } else {
+            printError("Git push failed! Check your SSH key and AUR permissions.");
+        }
     }
     waitForEnter();
 }
-
-
 
 void initRepo() {
     std::cout << "\n" << BOLD << CYAN << "--- BUILDING REPOSITORY SKELETON ---" << RESET << "\n";
@@ -287,20 +443,40 @@ void indexRepo() {
     std::string repoDir = askInput("Repository Root Directory", true, true);
     if (!fs::exists(repoDir)) { printError("Directory not found!"); waitForEnter(); return; }
 
+    bool dirError = false;
+
     std::string debianPool = repoDir + "/debian/pool/main";
-    if (fs::exists(debianPool) && !isDirEmpty(debianPool)) {
+    if (fs::exists(debianPool) && !isDirEmpty(debianPool, dirError)) {
         printStep("Indexing Debian packages");
         std::string codename = askInput("Codename (leave empty for 'stable')", false); if(codename.empty()) codename = "stable";
-        std::string arch = askInput("Architecture (leave empty for 'amd64')", false); if(arch.empty()) arch = "amd64";
-        std::string distsDir = repoDir + "/debian/dists/" + codename + "/main/binary-" + arch;
+        std::string debArch = askInput("Architecture (leave empty for 'amd64')", false); if(debArch.empty()) debArch = "amd64";
+        std::string distsDir = repoDir + "/debian/dists/" + codename + "/main/binary-" + debArch;
         fs::create_directories(distsDir);
 
-        std::string cmd = "cd " + escapeShellArg(repoDir + "/debian") + " && dpkg-scanpackages pool/main /dev/null > " + escapeShellArg("dists/" + codename + "/main/binary-" + arch + "/Packages");
+        std::string cmd = "cd " + escapeShellArg(repoDir + "/debian") + " && dpkg-scanpackages pool/main /dev/null > " + escapeShellArg("dists/" + codename + "/main/binary-" + debArch + "/Packages");
         if (std::system(cmd.c_str()) == 0) {
             std::system(("gzip -k -f " + escapeShellArg(distsDir + "/Packages")).c_str());
             printSuccess("Debian index updated.");
+        } else {
+            printError("Debian indexing failed! Is dpkg-dev installed?");
         }
+    } else if (dirError) {
+        printError("Skipping Debian indexing due to directory access error.");
     }
+
+    std::string rpmDir = repoDir + "/rpm";
+    if (fs::exists(rpmDir) && !isDirEmpty(rpmDir, dirError)) {
+        printStep("Indexing RPM packages");
+        std::string rpmCmd = "createrepo_c " + escapeShellArg(rpmDir);
+        if (std::system(rpmCmd.c_str()) == 0) {
+            printSuccess("RPM index updated.");
+        } else {
+            printError("RPM indexing failed! Is createrepo_c installed?");
+        }
+    } else if (dirError) {
+        printError("Skipping RPM indexing due to directory access error.");
+    }
+
     waitForEnter();
 }
 
@@ -310,30 +486,50 @@ void installTools() {
     bool hasDnf = (std::system("command -v dnf > /dev/null 2>&1") == 0);
     bool hasPacman = (std::system("command -v pacman > /dev/null 2>&1") == 0);
 
+    int result = -1;
+
     if (hasApt) {
         printStep("Debian/Ubuntu/MX Linux detected");
-        std::system("sudo apt update && sudo apt install -y dpkg-dev apt-utils createrepo-c docker.io git openssh-client");
+        result = std::system("sudo apt update && sudo apt install -y dpkg-dev apt-utils createrepo-c docker.io git openssh-client");
     } else if (hasDnf) {
         printStep("Fedora/RHEL detected");
-        std::system("sudo dnf install -y createrepo_c dpkg docker git openssh-clients");
+        result = std::system("sudo dnf install -y createrepo_c dpkg docker git openssh-clients");
     } else if (hasPacman) {
         printStep("Arch Linux detected");
-        std::system("sudo pacman -Sy --noconfirm dpkg createrepo_c docker git openssh");
+        result = std::system("sudo pacman -Sy --noconfirm dpkg createrepo_c docker git openssh");
+    } else {
+        printError("No supported package manager found (apt, dnf, or pacman).");
+        waitForEnter();
+        return;
     }
-    printSuccess("Attempted installation. Don't forget to start Docker if needed.");
+
+    if (result == 0) {
+        printSuccess("All tools installed successfully. Don't forget to start Docker if needed.");
+    } else {
+        printError("Some packages may have failed to install. Check the output above.");
+    }
     waitForEnter();
 }
 
 void showGuide() {
     clearScreen();
     std::cout << BOLD << CYAN << "--- USER GUIDE ---\n" << RESET;
-    std::cout << "1. Init: Creates repository subdirectories.\n2. Index: Scans and indexes packages.\n3. AUR: Prepares and pushes an Arch package via Docker.\n4. Install: Installs required tools.\n";
+    std::cout << "1. Init: Creates repository subdirectories (debian/pool, rpm, keys).\n";
+    std::cout << "2. Index: Scans and indexes .deb and .rpm packages.\n";
+    std::cout << "3. AUR: Prepares and pushes an Arch package (local or Docker).\n";
+    std::cout << "4. Install: Installs required tools for your distro.\n";
     askInput("Press [ENTER] to return", false);
 }
 
 int main() {
     std::signal(SIGINT, handleSigint);
+
     while(true) {
+        if (g_shouldExit.load()) {
+            showExitMessage();
+            break;
+        }
+
         printBanner();
         std::cout << "  [1] Create Repo Skeleton\n  [2] Scan and Index Repository\n  [3] AUR Automation Engine\n  [4] Install Required Tools\n  [0] User Guide\n  [q] Exit\n\n";
         std::string choice = askInput("Your choice", true, false);
