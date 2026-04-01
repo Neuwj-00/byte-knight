@@ -2,7 +2,7 @@ Package: ftr
 Version: 0.0.4
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/ftr_0.0.4_amd64.deb
+Filename: pool/main/ftr_0.0.4_amd64.deb
 Size: 20772
 MD5sum: a3cc33827871b481733e7ffeda1dc539
 SHA1: dd2df94025fe085135bea0bea87c0257ab29fa69
@@ -13,7 +13,7 @@ Package: ftr
 Version: 0.0.5
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/ftr_0.0.5_amd64.deb
+Filename: pool/main/ftr_0.0.5_amd64.deb
 Size: 21076
 MD5sum: a3317bb44d035aed94013b07ec6198e2
 SHA1: a81f28f8b09937a7b1687583b1c248c05e7bdb76
@@ -24,7 +24,7 @@ Package: pacFoge
 Version: 0.0.2
 Architecture: amd64
 Maintainer: Neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/pacFoge_0.0.2_amd64.deb
+Filename: pool/main/pacFoge_0.0.2_amd64.deb
 Size: 3728
 MD5sum: b0d41f23d66cde373b19c21a6f3fd7f1
 SHA1: 02694b62f9bd24fceb93eb3c2211a93ff79e52ed
@@ -35,7 +35,7 @@ Package: pacForge
 Version: 0.0.3
 Architecture: amd64
 Maintainer: Neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/pacForge_0.0.3_amd64.deb
+Filename: pool/main/pacForge_0.0.3_amd64.deb
 Size: 3960
 MD5sum: 041f57a868d73c34d4b05eee8bd727ef
 SHA1: 371e2dd32e11523066ac3357925843c53d1dff6b
@@ -46,7 +46,7 @@ Package: pacForge
 Version: 0.0.4
 Architecture: amd64
 Maintainer: Neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/pacForge_0.0.4_amd64.deb
+Filename: pool/main/pacForge_0.0.4_amd64.deb
 Size: 4232
 MD5sum: 17c984d4e0f7b163fc9a22113d66b0c3
 SHA1: 7f5c68183a932eb89dcdd1f484998e96e450e7cb
@@ -57,7 +57,7 @@ Package: pacForge
 Version: 0.0.5
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/pacForge_0.0.5_amd64.deb
+Filename: pool/main/pacForge_0.0.5_amd64.deb
 Size: 4628
 MD5sum: 5df618b0ebe6cdfa3acc68a5b181edd5
 SHA1: 9c0cd8dad6cf021aa67d0878e43a4c71878e8910
@@ -68,7 +68,7 @@ Package: pacforge
 Version: 0.0.6
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/pacforge_0.0.6_amd64.deb
+Filename: pool/main/pacforge_0.0.6_amd64.deb
 Size: 4748
 MD5sum: 22a73485047866bb238f1f7e9837f6d8
 SHA1: 1e250842bc2b1fe94173f4ae6355f2264e20355a
@@ -79,7 +79,7 @@ Package: pacforge
 Version: 0.0.7
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/pacforge_0.0.7_amd64.deb
+Filename: pool/main/pacforge_0.0.7_amd64.deb
 Size: 20560
 MD5sum: 9ac7da32495ea8d6cb3cb1e411c7f4da
 SHA1: 37a04bc0c0f4c02fe0cf8e69d0973965cca79e63
@@ -90,7 +90,7 @@ Package: pacforge
 Version: 0.0.8
 Architecture: amd64
 Maintainer: neuwj <neuuwj@bk.ru>
-Filename: debian/pool/main/pacforge_0.0.8_amd64.deb
+Filename: pool/main/pacforge_0.0.8_amd64.deb
 Size: 24304
 MD5sum: 5a27561b970f5ce9d8ffa4c4b2ebace4
 SHA1: 4fb4010bd416e5d84825c4ba339eb88d469fa304
@@ -101,7 +101,7 @@ Package: pacforge
 Version: 0.0.9
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/pacforge_0.0.9_amd64.deb
+Filename: pool/main/pacforge_0.0.9_amd64.deb
 Size: 24596
 MD5sum: 5bf63f3a878fa79f7f745c6eac8fe514
 SHA1: bd5c1a0731f546b51d1c764936dce269572884a3
@@ -112,7 +112,7 @@ Package: pacforge
 Version: 0.1.0
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/pacforge_0.1.0_amd64.deb
+Filename: pool/main/pacforge_0.1.0_amd64.deb
 Size: 24184
 MD5sum: 5e918d55bdb7badef9b953f2cfc176f1
 SHA1: b47b6b14c3e207f73fda79d72be856dac1b431dc
@@ -123,7 +123,7 @@ Package: repoforge
 Version: 0.0.8
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/repoforge_0.0.8_amd64.deb
+Filename: pool/main/repoforge_0.0.8_amd64.deb
 Size: 16756
 MD5sum: 5dfdea537109147c1ca5fc30f5b83121
 SHA1: 8689309598a1cd04b225cb8b6d0f87890c12b27b
@@ -134,7 +134,7 @@ Package: repoforge
 Version: 0.0.9
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/repoforge_0.0.9_amd64.deb
+Filename: pool/main/repoforge_0.0.9_amd64.deb
 Size: 23684
 MD5sum: ca53963321dc5b6db3063de65c2d33d9
 SHA1: 0b6ea38db6fc1d4d770ff0fd90f6b31d05ebd9e7
@@ -146,7 +146,7 @@ Version: 1.0.1
 Architecture: amd64
 Maintainer: Neuwj <neuwj@bk.ru>
 Depends: cloudflare-warp
-Filename: debian/pool/main/warpcplus.deb
+Filename: pool/main/warpcplus.deb
 Size: 7352
 MD5sum: 6ac5847fe8c89fb6ea3d4112aec459b6
 SHA1: 273b73744187eb83a342a1e653bf0c47a00dbe03
@@ -159,7 +159,7 @@ Package: warpcpp
 Version: 0.0.3
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/warpcpp_0.0.3_amd64.deb
+Filename: pool/main/warpcpp_0.0.3_amd64.deb
 Size: 14644
 MD5sum: 50cb49d4f64ff12bd3df406e084d2860
 SHA1: 4180147c219a33ffa21cfc720e311b2b3a637fc2
@@ -170,7 +170,7 @@ Package: warpcpp
 Version: 0.0.4
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: debian/pool/main/warpcpp_0.0.4_amd64.deb
+Filename: pool/main/warpcpp_0.0.4_amd64.deb
 Size: 14856
 MD5sum: 79253bd6cf4c154ec4d3b8fb35885925
 SHA1: be89b0cb8e3f8f21031f763ec00c75417175af35
