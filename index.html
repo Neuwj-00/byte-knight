@@ -275,11 +275,11 @@
                                 <pre
                                     class="p-4 text-xs sm:text-sm font-mono text-gh-text w-max"
                                     id="code-apt"
-                                ><code><span class="text-gh-muted"># Add the GPG Key</span>
-wget -qO- https://neuwj-00.github.io/byte-knight/keys/public.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/byte-knight.gpg
+                      <pre><code><span class="text-gh-muted"># Add the GPG Key to the modern keyring directory</span>
+wget -qO- https://neuwj-00.github.io/byte-knight/keys/public.key | sudo gpg --dearmor -o /usr/share/keyrings/byte-knight-keyring.gpg
 
-<span class="text-gh-muted"># Add the Repository to your list</span>
-echo "deb [arch=amd64] https://neuwj-00.github.io/byte-knight/debian stable main" | sudo tee /etc/apt/sources.list.d/byte-knight.list
+<span class="text-gh-muted"># Add the Repository with the signed-by option for better security</span>
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/byte-knight-keyring.gpg] https://neuwj-00.github.io/byte-knight/debian stable main" | sudo tee /etc/apt/sources.list.d/byte-knight.list
 
 <span class="text-gh-muted"># Update and Install</span>
 sudo apt update && sudo apt install pacforge</code></pre>
