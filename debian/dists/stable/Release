@@ -1,0 +1,24 @@
+Origin: byte-knight
+Label: byte-knight
+Suite: stable
+Codename: stable
+Architectures: amd64
+Components: main
+Description: Neuwj Custom Tool Repo
+Date: Tue, 31 Mar 2026 22:05:29 +0000
+MD5Sum:
+ d440513ea4b2dde6cdfb12bb1c87a1e1              182 Release
+ 4113bfbad62c88daa7b71c081d70c98b             7248 main/binary-amd64/Packages
+ 2cd93e217b3e72fa5720894c60db27a3             3139 main/binary-amd64/Packages.gz
+SHA1:
+ 25d23e4dde81e1e1501d5dcea49e5da34e00a39e              182 Release
+ 5a44a498e3be7712a1fe4bf4e81350e59e2aef41             7248 main/binary-amd64/Packages
+ e434545ba02889a76791f615097614e06c7fbd3c             3139 main/binary-amd64/Packages.gz
+SHA256:
+ a9e4050e25d12d89dc8aa34b9a9965ab2052f21f2fe89993c2c2b4683bccf0a5              182 Release
+ 8911554a579580ef3173b60879d970cc7d374116b71c5745d27256c6eb7704b0             7248 main/binary-amd64/Packages
+ d6e2610e984a9a2463836013030c75584bfc79ee26ef45b4ab5966880b1efa93             3139 main/binary-amd64/Packages.gz
+SHA512:
+ 86abe1109f6a44e700efce22cfb05b153aaa0bfda8647d70f4f6fa84cc05ca8324909e26d5f54e606add655f9e86ff4cc122e91159160d1b1630a68c7d3c016e              182 Release
+ 4ae2cd9193e3a6ffac56f469496f2184ae1765a3d36c1898576b773bf8033eb13d7311706c8cb160ca1ff5b9913cefa9dab5e0ba7b583efc8636fe2b389e737f             7248 main/binary-amd64/Packages
+ 1e0c026d6f3f9f7763674316f2c72a0c291a731dffdd88fd1da075cdf7cde33484d5488e0691a1e37ff6d7b4a9acddfa439f581c7761a6f7c125ca691ad674eb             3139 main/binary-amd64/Packages.gz
