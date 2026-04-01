@@ -153,7 +153,6 @@ std::string askInput(const std::string& question, bool isRequired = true, bool i
     }
 }
 
-// ================= AUR AUTOMATION MODULE =================
 
 void handleAUR() {
     clearScreen();
@@ -267,7 +266,7 @@ void handleAUR() {
     waitForEnter();
 }
 
-// ================= OTHER FUNCTIONS =================
+
 
 void initRepo() {
     std::cout << "\n" << BOLD << CYAN << "--- BUILDING REPOSITORY SKELETON ---" << RESET << "\n";
