@@ -14,7 +14,6 @@
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 ![Built For Linux](https://img.shields.io/badge/Built_for-Linux-2ea44f?style=for-the-badge&logo=linux&logoColor=white)
 
-Created by [Neuwj](https://github.com/Neuwj-00) 
 
 </div>
 
@@ -115,3 +114,4 @@ Email: neuwj@bk.ru
 
 📄 !!License!!
 ### This project is open-source and licensed under the GNU General Public License v3.0.
+Created by [Neuwj](https://github.com/Neuwj-00) 
