@@ -9,11 +9,21 @@ SHA1: a81f28f8b09937a7b1687583b1c248c05e7bdb76
 SHA256: de210888bc11c2ba54f42a5a0297b8edc2d2ae27478716c2c13317e9ea400abd
 Description: Folder tree printer [Certified by: LPIC-1]
 
+Package: gitforge
+Version: 0.0.0
+Architecture: amd64
+Maintainer: neuwj <neuwj@bk.ru>
+Filename: pool/main/gitforge_0.0.0_amd64.deb
+Size: 2065284
+MD5sum: a292d8dc2a30d01b82b2eb8920850564
+SHA1: 909a2c13d4f4f966a3eea0fee2843c6fa2628a46
+SHA256: 8016e9ffe1b63f168a72d7247bbf1a7c6b708df0fe439e31b7592151dd0a2b91
+
 Package: pacFoge
 Version: 0.0.2
 Architecture: amd64
 Maintainer: Neuwj <neuwj@bk.ru>
-Filename: pool/main/pacFoge_0.0.2_amd64.deb
+Filename: pool/main/pacForge_0.0.2_amd64.deb
 Size: 3728
 MD5sum: b0d41f23d66cde373b19c21a6f3fd7f1
 SHA1: 02694b62f9bd24fceb93eb3c2211a93ff79e52ed
@@ -63,20 +73,6 @@ MD5sum: 012d2e14a8d25044bd23d1dbba5da4e0
 SHA1: 32506c29a5bef56c4fcc24b26e7aa4f36b3596ec
 SHA256: c49f5f9c374eac72bbd9f39a4e77221cac4c187921d2eff536af15a47faef10d
 Description: Easy uninstaller
-
-Package: warpcplus
-Version: 1.0.1
-Architecture: amd64
-Maintainer: Neuwj <neuwj@bk.ru>
-Depends: cloudflare-warp
-Filename: pool/main/warpcplus.deb
-Size: 7352
-MD5sum: 6ac5847fe8c89fb6ea3d4112aec459b6
-SHA1: 273b73744187eb83a342a1e653bf0c47a00dbe03
-SHA256: c8b1ff0eb345249b825be6a699b823131dbd2decbd68df2ac12a1aeb3d36862b
-Section: utils
-Priority: optional
-Description: Ultra-light C++ Cloudflare Warp TUI.
 
 Package: warpcpp
 Version: 0.0.4
