@@ -226,9 +226,7 @@
                             and install packages:
                         </p>
 
-                        <h3>Debian / Ubuntu</h3>
-
-                        <!-- Installer Script Block -->
+                        <h3>Debian / Ubuntu (APT)</h3>
                         <div
                             class="relative bg-gh-card rounded-md border border-gh-border my-4 group overflow-hidden"
                         >
@@ -239,7 +237,7 @@
                                     >bash</span
                                 >
                                 <button
-                                    onclick="copyToClipboard('code-apt-script', this)"
+                                    onclick="copyToClipboard('code-apt', this)"
                                     class="text-gh-muted hover:text-gh-text transition-colors"
                                     title="Copy code"
                                 >
@@ -276,71 +274,15 @@
                             <div class="overflow-x-auto max-w-full">
                                 <pre
                                     class="p-4 text-xs sm:text-sm font-mono text-gh-text w-max"
-                                    id="code-apt-script"
-                                ><code><span class="text-gh-muted"># Download the script from the Releases section and run it with this command</span>
-chmod +x "RepositoryInstaller.sh" && ./"RepositoryInstaller.sh"</code></pre>
-                            </div>
-                        </div>
+                                    id="code-apt"
+                      ><pre><code><span class="text-gh-muted"># Add the GPG Key to the modern keyring directory</span>
+wget -qO- https://neuwj-00.github.io/byte-knight/keys/public.key | sudo gpg --dearmor -o /usr/share/keyrings/byte-knight-keyring.gpg
 
-                        <!-- Manual Install Block -->
-                        <div
-                            class="relative bg-gh-card rounded-md border border-gh-border my-4 group overflow-hidden"
-                        >
-                            <div
-                                class="flex items-center justify-between px-4 py-2 border-b border-gh-border bg-[#1c2128]"
-                            >
-                                <span class="text-xs text-gh-muted font-mono"
-                                    >bash</span
-                                >
-                                <button
-                                    onclick="copyToClipboard('code-apt-manual', this)"
-                                    class="text-gh-muted hover:text-gh-text transition-colors"
-                                    title="Copy code"
-                                >
-                                    <svg
-                                        class="copy-icon"
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 16 16"
-                                        fill="currentColor"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"
-                                        ></path>
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"
-                                        ></path>
-                                    </svg>
-                                    <svg
-                                        class="check-icon hidden text-gh-green"
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 16 16"
-                                        fill="currentColor"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"
-                                        ></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="overflow-x-auto max-w-full">
-                                <pre
-                                    class="p-4 text-xs sm:text-sm font-mono text-gh-text w-max"
-                                    id="code-apt-manual"
-                                ><code><span class="text-gh-muted"># Manual install
-# Add the GPG key for secure package verification</span>
-curl -fsSL https://neuwj-00.github.io/byte-knight/keys/public.key | sudo gpg --dearmor -o /usr/share/keyrings/byte-knight-keyring.gpg
+<span class="text-gh-muted"># Add the Repository with the signed-by option for better security</span>
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/byte-knight-keyring.gpg] https://neuwj-00.github.io/byte-knight/debian stable main" | sudo tee /etc/apt/sources.list.d/byte-knight.list
 
-<span class="text-gh-muted"># Add the official repository to your APT sources</span>
-echo "deb [signed-by=/usr/share/keyrings/byte-knight-keyring.gpg] https://neuwj-00.github.io/byte-knight/debian stable main" | sudo tee /etc/apt/sources.list.d/byte-knight.list
-
-<span class="text-gh-muted"># Update package lists and install your desired tools</span>
-sudo apt update
-sudo apt install pacforge repoforge ftr warpcpp</code></pre>
+<span class="text-gh-muted"># Update and Install</span>
+sudo apt update && sudo apt install pacforge</code></pre>
                             </div>
                         </div>
 
@@ -594,7 +536,7 @@ sudo dnf update && sudo dnf install pacforge</code></pre>
                     if (releaseRes.ok) {
                         const releaseData = await releaseRes.json();
                         releaseContainer.innerHTML = `
-                        <a href="${releaseData.html_url}" target="_blank" class="flex items-center gap-2 text-sm text-gh-text hover:text-gh-link group">
+                        <a href="${releaseData.html_url}" target="_blank" class="flex items-center gap-2 text-sm font-semibold text-gh-link hover:underline group">
                             <svg width="16" height="16" viewBox="0 0 16 16" class="fill-gh-muted group-hover:fill-gh-link"><path fill-rule="evenodd" d="M2.5 7.775V2.75a.25.25 0 01.25-.25h5.025a.25.25 0 01.177.073l6.25 6.25a.25.25 0 010 .354l-5.025 5.025a.25.25 0 01-.354 0l-6.25-6.25a.25.25 0 01-.073-.177zm-1.5 0V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 010 2.474l-5.026 5.026a1.75 1.75 0 01-2.474 0l-6.25-6.25A1.75 1.75 0 011 7.775zM6 5a1 1 0 100 2 1 1 0 000-2z"></path></svg>
                             ${releaseData.tag_name} Latest
                         </a>`;
