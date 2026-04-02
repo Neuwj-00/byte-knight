@@ -34,10 +34,16 @@ This repository serves as both the source code hub and the official distribution
 ---
 
 ## Installation
-
+#
 ### Debian / Ubuntu
 
 ```bash
+# Download the script from the Releases section and run it with this command
+chmod +x "RepositoryInstaller.sh" && ./"RepositoryInstaller.sh"
+```
+
+```bash
+# Manual install
 # Add the GPG key for secure package verification
 curl -fsSL [https://neuwj-00.github.io/byte-knight/keys/public.key](https://neuwj-00.github.io/byte-knight/keys/public.key) | sudo gpg --dearmor -o /usr/share/keyrings/byte-knight-keyring.gpg
 
