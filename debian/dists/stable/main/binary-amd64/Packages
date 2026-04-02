@@ -53,6 +53,17 @@ SHA1: b0aca776c495ae6263505faebe441b53f11e8c68
 SHA256: 3a7793ed9583e110b5cd162871fb88f3bf5ea257d270ddcd8d3bc5c8402a1db3
 Description: Automated Repository Indexer
 
+Package: uninstall
+Version: 0.0.1
+Architecture: amd64
+Maintainer: neuwj<neuwj@bk.ru>
+Filename: pool/main/uninstall_0.0.1_amd64.deb
+Size: 8246384
+MD5sum: 012d2e14a8d25044bd23d1dbba5da4e0
+SHA1: 32506c29a5bef56c4fcc24b26e7aa4f36b3596ec
+SHA256: c49f5f9c374eac72bbd9f39a4e77221cac4c187921d2eff536af15a47faef10d
+Description: Easy uninstaller
+
 Package: warpcplus
 Version: 1.0.1
 Architecture: amd64
