@@ -27,7 +27,7 @@ fn print_banner() {
     println!("{BOLD}{BLUE}================================================={RESET}");
     println!("{BOLD}{CYAN}      o      {RESET}{BOLD}gitForge{RESET}");
     println!("{BOLD}{CYAN}     / \\     {RESET}Toolkit: Git & GPG Automation");
-    println!("{BOLD}{CYAN}    o   o    {RESET}Version: 0.0.0 Testing");
+    println!("{BOLD}{CYAN}    o   o    {RESET}Version: 0.0.1");
     println!("{BOLD}{CYAN}    |  /     {RESET}Developer: Neuwj");
     println!("{BOLD}{CYAN}    | o      {RESET}Contact:   neuwj@bk.ru");
     println!("{BOLD}{CYAN}    |/       {RESET}");
@@ -108,7 +108,7 @@ fn run_cmd(cmd: &str) {
 fn setup_working_directory() {
     clear_screen();
     println!("{BOLD}{BLUE}================================================={RESET}");
-    println!("{BOLD}{CYAN}          gitForge - WORKSPACE SETUP            {RESET}");
+    println!("{BOLD}{CYAN}         gitForge - WORKSPACE SETUP         {RESET}");
     println!("{BOLD}{BLUE}================================================={RESET}\n");
 
     loop {
@@ -139,6 +139,7 @@ fn menu_setup() {
         println!("  [1] Initialize New Repo (init)");
         println!("  [2] Clone Repo (clone)");
         println!("  [3] Add Remote (remote add)");
+        println!("  [4] Configure Git User (config)");
         println!("  [q] Go Back\n");
 
         let choice = ask_input("Your choice", true);
@@ -152,6 +153,16 @@ fn menu_setup() {
                 let url = ask_input("Remote Repo URL (origin)", true);
                 if url.to_lowercase() != "q" { run_cmd(&format!("git remote add origin {}", url)); }
             }
+            "4" => {
+                let name = ask_input("Your Git Username", true);
+                if name.to_lowercase() != "q" {
+                    let email = ask_input("Your Git Email", true);
+                    if email.to_lowercase() != "q" {
+                        run_cmd(&format!("git config --global user.name \"{}\"", name));
+                        run_cmd(&format!("git config --global user.email \"{}\"", email));
+                    }
+                }
+            }
             "q" | "Q" => break,
             _ => print_error("Invalid choice!"),
         }
@@ -164,7 +175,8 @@ fn menu_daily_workflow() {
         print_banner();
         println!("{BOLD}--- DAILY WORKFLOW ---{RESET}\n");
         println!("  [1] Status (status)      [2] Add All (add .)       [3] Commit (commit)");
-        println!("  [4] Push (push)          [5] Pull (pull)           [6] Fetch (fetch)");
+        println!("  [4] Push (push)          [5] Force Push (-f)       [6] Pull (pull)");
+        println!("  [7] Fetch (fetch)        [8] View History (log)    [9] View Diffs (diff)");
         println!("  [q] Go Back\n");
 
         let choice = ask_input("Your choice", true);
@@ -176,8 +188,18 @@ fn menu_daily_workflow() {
                 if msg.to_lowercase() != "q" { run_cmd(&format!("git commit -m \"{}\"", msg)); }
             }
             "4" => run_cmd("git push"),
-            "5" => run_cmd("git pull"),
-            "6" => run_cmd("git fetch"),
+            "5" => {
+                let confirm = ask_input("WARNING: Are you sure you want to force push? (y/N)", true);
+                if confirm.to_lowercase() == "y" {
+                    run_cmd("git push --force");
+                } else {
+                    print_error("Force push canceled.");
+                }
+            }
+            "6" => run_cmd("git pull"),
+            "7" => run_cmd("git fetch"),
+            "8" => run_cmd("git log --oneline --graph --decorate -n 15"),
+            "9" => run_cmd("git diff"),
             "q" | "Q" => break,
             _ => print_error("Invalid choice!"),
         }
@@ -192,6 +214,7 @@ fn menu_branching() {
         println!("  [1] List Branches        [2] Create New Branch");
         println!("  [3] Switch Branch        [4] Merge Branch");
         println!("  [5] Rebase               [6] Cherry-pick");
+        println!("  [7] Delete Branch (-d)");
         println!("  [q] Go Back\n");
 
         let choice = ask_input("Your choice", true);
@@ -216,6 +239,10 @@ fn menu_branching() {
             "6" => {
                 let hash = ask_input("Commit Hash to copy", true);
                 if hash.to_lowercase() != "q" { run_cmd(&format!("git cherry-pick {}", hash)); }
+            }
+            "7" => {
+                let bname = ask_input("Branch name to delete", true);
+                if bname.to_lowercase() != "q" { run_cmd(&format!("git branch -d {}", bname)); }
             }
             "q" | "Q" => break,
             _ => print_error("Invalid choice!"),
@@ -263,9 +290,9 @@ fn menu_advanced() {
         println!("{BOLD}--- ADVANCED & MAINTENANCE ---{RESET}\n");
         println!("  [1] Pull Submodules");
         println!("  [2] Archive Repo (.tar.gz)");
-        println!("  [3] Stash List");
-        println!("  [4] Developer Shortlog");
-        println!("  [5] Cleanup (gc & clean)");
+        println!("  [3] Stash List           [4] Stash Changes");
+        println!("  [5] Developer Shortlog   [6] Cleanup (gc & clean)");
+        println!("  [7] Undo Last Commit (Keep files)");
         println!("  [q] Go Back\n");
 
         let choice = ask_input("Your choice", true);
@@ -278,8 +305,15 @@ fn menu_advanced() {
                 }
             }
             "3" => run_cmd("git stash list"),
-            "4" => run_cmd("git shortlog -sn"),
-            "5" => run_cmd("git gc && git clean -fd"),
+            "4" => run_cmd("git stash push -m \"gitForge quick stash\""),
+            "5" => run_cmd("git shortlog -sn"),
+            "6" => run_cmd("git gc && git clean -fd"),
+            "7" => {
+                let confirm = ask_input("Are you sure you want to undo the last commit? (y/N)", true);
+                if confirm.to_lowercase() == "y" {
+                    run_cmd("git reset --soft HEAD~1");
+                }
+            }
             "q" | "Q" => break,
             _ => print_error("Invalid choice!"),
         }
@@ -321,11 +355,11 @@ fn main() {
 
     loop {
         print_banner();
-        println!("  [1] Repo Setup (init, clone, remote)");
-        println!("  [2] Daily Workflow (status, add, commit, push)");
-        println!("  [3] Branch Operations (switch, merge, rebase)");
+        println!("  [1] Repo Setup (init, clone, config, remote)");
+        println!("  [2] Daily Workflow (status, add, commit, push -f, log)");
+        println!("  [3] Branch Operations (switch, merge, rebase, delete)");
         println!("  [4] GPG Security (Sign, Key management)");
-        println!("  [5] Advanced & Maintenance (archive, gc, submodule)");
+        println!("  [5] Advanced & Maintenance (stash, archive, gc, undo commit)");
         println!("  [6] Install System Dependencies (Git, GPG, SSH etc.)");
         println!("  [q] Exit\n");
 

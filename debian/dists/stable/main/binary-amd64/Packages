@@ -10,20 +10,21 @@ SHA256: de210888bc11c2ba54f42a5a0297b8edc2d2ae27478716c2c13317e9ea400abd
 Description: Folder tree printer [Certified by: LPIC-1]
 
 Package: gitforge
-Version: 0.0.0
+Version: 0.0.1
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: pool/main/gitforge_0.0.0_amd64.deb
-Size: 2065284
-MD5sum: a292d8dc2a30d01b82b2eb8920850564
-SHA1: 909a2c13d4f4f966a3eea0fee2843c6fa2628a46
-SHA256: 8016e9ffe1b63f168a72d7247bbf1a7c6b708df0fe439e31b7592151dd0a2b91
+Filename: pool/main/gitforge_0.0.1_amd64.deb
+Size: 2066720
+MD5sum: 3da812e1d0ed57a802888c91d422787b
+SHA1: 94151cd36ff596bba0223dcd3a14a199eb0b1410
+SHA256: bd074db668eb18f4e05e85400e64fe7184b2b5676835a6a2ae7cab917edfc254
+Description: Easy GİT contro
 
 Package: pacFoge
 Version: 0.0.2
 Architecture: amd64
 Maintainer: Neuwj <neuwj@bk.ru>
-Filename: pool/main/pacForge_0.0.2_amd64.deb
+Filename: pool/main/pacforge_0.0.2_amd64.deb
 Size: 3728
 MD5sum: b0d41f23d66cde373b19c21a6f3fd7f1
 SHA1: 02694b62f9bd24fceb93eb3c2211a93ff79e52ed
@@ -34,7 +35,7 @@ Package: pacForge
 Version: 0.0.5
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: pool/main/pacForge_0.0.5_amd64.deb
+Filename: pool/main/pacforge_0.0.5_amd64.deb
 Size: 4628
 MD5sum: 5df618b0ebe6cdfa3acc68a5b181edd5
 SHA1: 9c0cd8dad6cf021aa67d0878e43a4c71878e8910
