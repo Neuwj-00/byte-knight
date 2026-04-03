@@ -18,5 +18,5 @@ jobs:
           files: |
             debian/pool/main/*.deb
             rpm/*.rpm
-        env:
-          VT_API_KEY: ${{ secrets.5712b74b994a582490673ac51c77512ed6b3e83fc2896658d91016db932c878d }}
+     env:
+          VT_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}

@@ -22,17 +22,25 @@
 
 ## Overview
 
-This repository serves as both the source code hub and the official distribution point for a suite of high-performance C++ terminal utilities. It is fully structured as a production-ready package repository, supporting direct installations for both Debian-based (`.deb`) and Red Hat-based (`.rpm`) Linux ecosystems.
+Byte Knight: High-Performance Linux Utility Suite & Distribution Repository
+
+This repository serves as the official source and distribution hub for the Byte Knight suite—an integrated collection of high-performance system utilities developed using a multi-language stack, including C++, Rust, Python, and Shell.
+
+Designed for efficiency and scalability, the suite provides essential tools for advanced Linux system management. This repository is fully structured as a production-grade package distribution center, offering natively signed and verified installations for both Debian-based (.deb) and Red Hat-based (.rpm) Linux environments.
+
+Security & Integrity: All binary distributions undergo automated security auditing via VirusTotal and GitHub Actions to ensure software integrity and system safety.
 
 ---
 
 ## 🛠️ Included Tools
 
-- **pacForge** — The Universal Linux Packaging Wizard. Automates the creation of `.deb` and `.rpm` packages with licensing, metadata, and directory structuring.
-- **repoForge** — A specialized utility for creating, managing, and maintaining local or remote APT and RPM package repositories.
-- **foldertree (ftr)** — A highly customizable CLI tool that visualizes and prints the tree structure of specified directories.
-- **warp / warpcplus** — A C++ utility engineered for network operations, tunneling, and connectivity management.
-
+* **`pacForge` (C++)** — *The Universal Linux Packaging Wizard.* Automates the creation of `.deb` and `.rpm` packages, fully handling licensing, metadata generation, and directory structuring.
+* **`repoForge` (C++)** — *The Repository Architect.* A specialized utility for creating, managing, and maintaining local or remote APT and RPM package repositories.
+* **`foldertree / ftr` (C++)** — *The Directory Visualizer.* A highly customizable CLI tool that visualizes and prints the tree structure of specified directories with precision.
+* **`warp / warpcplus` (C++)** — *The Network Forger.* An advanced utility engineered for network operations, secure tunneling, and connectivity management.
+* **`gitForge` (Rust)** — A memory-safe, high-speed utility designed for Git repository tracking and automation.
+* **`uninstallerdeb` (Python)** — A flexible script for safely and cleanly removing installed Debian packages.
+* **`RepositoryInstaller` (Shell)** — The automated deployment script that seamlessly configures the Byte Knight APT/RPM repositories on your local machine.
 ---
 
 ## Installation
