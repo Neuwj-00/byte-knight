@@ -1,8 +1,9 @@
 <div align="center">
 
 # 📦 Byte-knight
-
+# [![Sponsor](https://img.shields.io/badge/Sponsor-Neuwj--00-pink?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/Neuwj-00)
 **A Custom Linux Package Repository by Neuwj**
+
 
 ![GPL v3](https://img.shields.io/badge/License-GPL_v3-blue?style=for-the-badge&logo=gnu&logoColor=white)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-E9430F?style=for-the-badge&logo=ubuntu&logoColor=white)
@@ -111,7 +112,7 @@ GitHub: [Neuwj-00](https://github.com/Neuwj-00)
 Website: [neuwj-00.github.io/byte-knight](https://neuwj-00.github.io/byte-knight/)
 
 Email: neuwj@bk.ru
-[![Sponsor](https://img.shields.io/badge/Sponsor-Neuwj--00-pink?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/Neuwj-00)
+
 📄 !!License!!
 ### This project is open-source and licensed under the GNU General Public License v3.0.
 Created by [Neuwj](https://github.com/Neuwj-00) 

@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <title>Byte Knight | Repository Tree</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
@@ -65,17 +65,29 @@
 
             .custom-scrollbar::-webkit-scrollbar {
                 width: 6px;
+                height: 6px;
             }
 
             .markdown-body h1 {
                 border-bottom: 1px solid #30363d;
                 padding-bottom: 0.3em;
                 margin-bottom: 16px;
-                font-size: 2em;
+                font-size: 1.5em;
                 font-weight: 600;
+            }
+            @media (min-width: 640px) {
+                .markdown-body h1 {
+                    font-size: 2em;
+                }
             }
             .markdown-body p {
                 margin-bottom: 16px;
+                font-size: 14px;
+            }
+            @media (min-width: 640px) {
+                .markdown-body p {
+                    font-size: 15px;
+                }
             }
             .markdown-body code {
                 background-color: rgba(110, 118, 129, 0.4);
@@ -104,7 +116,7 @@
             .tree-ul .tree-ul > .tree-li::before {
                 content: "";
                 position: absolute;
-                top: 15px;
+                top: 16px;
                 left: 0;
                 width: 13px;
                 border-top: 1px solid rgba(255, 255, 255, 0.18);
@@ -113,7 +125,7 @@
             .tree-ul .tree-ul > .tree-li:last-child::after {
                 content: "";
                 position: absolute;
-                top: 16px;
+                top: 17px;
                 bottom: -20px;
                 left: -1px;
                 border-left: 2px solid #0d1117;
@@ -130,22 +142,23 @@
     </head>
     <body class="bg-gh-bg text-gh-text font-sans antialiased min-h-screen flex flex-col">
 
-        <header class="bg-gh-header py-4 px-4 sm:px-6 border-b border-gh-border flex items-center justify-between">
-            <div class="flex items-center gap-4">
+        <header class="bg-gh-header py-4 px-4 sm:px-6 border-b border-gh-border flex items-center justify-between sticky top-0 z-50 shadow-sm">
+            <div class="flex items-center gap-3 sm:gap-4">
                 <div class="text-sm font-semibold flex items-center gap-2 flex-wrap">
-                    <span class="text-gh-text hover:underline cursor-pointer font-bold text-base">
+                    <a href="https://neuwj-00.github.io/byte-knight/" class="bg-[#21262d] hover:bg-[#30363d] border border-gh-border text-gh-text px-3 py-1.5 rounded-md text-sm font-semibold transition-all duration-200 shadow-sm active:scale-95 flex items-center gap-1.5">
+                        <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="fill-current"><path d="M7.78 12.53a.75.75 0 0 1-1.06 0L2.47 8.28a.75.75 0 0 1 0-1.06l4.25-4.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L4.81 7h7.44a.75.75 0 0 1 0 1.5H4.81l2.97 2.97a.75.75 0 0 1 0 1.06Z"></path></svg>
                         Byte Knight
-                    </span>
-                    <span class="border border-gh-border text-gh-muted px-2 py-0.5 rounded-full text-xs font-medium ml-1 sm:ml-2">
+                    </a>
+                    <span class="border border-gh-border text-gh-muted px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium ml-1 sm:ml-2">
                         Repository
                     </span>
                 </div>
             </div>
         </header>
 
-        <main class="flex-grow max-w-[1012px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <main class="flex-grow max-w-[1012px] w-full mx-auto px-3 sm:px-6 py-6 sm:py-8">
 
-            <div class="mb-6 markdown-body">
+            <div class="mb-5 sm:mb-6 markdown-body px-1 sm:px-0">
                 <h1>My Repository's Folder Structure</h1>
                 <p>
                     Below is the dynamic directory and file hierarchy of this project fetched directly from GitHub. Click on the folders to explore their contents.
@@ -153,27 +166,27 @@
             </div>
 
             <div class="border border-gh-border rounded-lg bg-gh-bg overflow-hidden shadow-sm">
-                <div class="bg-gh-card px-4 py-3 border-b border-gh-border flex items-center justify-between">
+                <div class="bg-gh-card px-3 sm:px-4 py-3 border-b border-gh-border flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="fill-gh-text">
+                        <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="fill-gh-text flex-shrink-0">
                             <path d="M2 1.75C2 .784 2.784 0 3.75 0h10.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H3.75A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25Z"></path>
                             <path d="M3 5h10v1.5H3V5zm0 3.5h7V10H3V8.5z"></path>
                         </svg>
-                        <span class="text-sm font-semibold">tree.txt</span>
+                        <span class="text-sm font-semibold truncate">tree.txt</span>
                     </div>
-                    <button id="toggle-btn" class="text-xs text-gh-link hover:underline bg-gh-card px-2 py-1 rounded border border-gh-border transition-colors">Expand All</button>
+                    <button id="toggle-btn" class="text-xs text-gh-link hover:underline bg-gh-card px-2 py-1.5 sm:py-1 rounded border border-gh-border transition-colors active:bg-gh-border">Expand All</button>
                 </div>
 
-                <div class="p-4 sm:p-6 bg-gh-bg overflow-x-auto min-h-[400px]">
-                    <div id="tree-container" class="min-w-max font-mono">
-                        <span class="text-sm text-gh-muted">Loading directory structure...</span>
+                <div class="p-3 sm:p-6 bg-gh-bg overflow-x-auto min-h-[400px] custom-scrollbar" style="-webkit-overflow-scrolling: touch;">
+                    <div id="tree-container" class="min-w-max font-mono pb-4 pr-4">
+                        <span class="text-sm text-gh-muted animate-pulse">Loading directory structure...</span>
                     </div>
                 </div>
             </div>
         </main>
 
-        <footer class="mt-auto py-8 border-t border-gh-border">
-            <div class="max-w-[1012px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-gh-muted gap-4">
+        <footer class="mt-auto py-6 sm:py-8 border-t border-gh-border">
+            <div class="max-w-[1012px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-gh-muted gap-3 sm:gap-4">
                 <div class="flex items-center gap-2">
                     <span>&copy; 2026 Byte Knight Project</span>
                 </div>
@@ -281,7 +294,7 @@
 
                         let html = `<li class="tree-li ${isRoot ? 'tree-root' : ''}">`;
 
-                        html += `<div class="tree-row flex items-center gap-2 py-[3px] px-2 rounded-md hover:bg-[#161b22] ${hasChildren ? 'cursor-pointer' : ''} text-[14.5px] text-gh-text select-none relative z-10 transition-colors group" ${hasChildren ? 'onclick="toggleFolder(this)"' : ''}>`;
+                        html += `<div class="tree-row flex items-center gap-2 py-1.5 px-2 rounded-md hover:bg-[#161b22] ${hasChildren ? 'cursor-pointer active:bg-[#21262d]' : ''} text-[13.5px] sm:text-[14.5px] text-gh-text select-none relative z-10 transition-colors group" ${hasChildren ? 'onclick="toggleFolder(this)"' : ''}>`;
 
                         html += `<div class="icon-wrapper w-4 h-4 flex-shrink-0 flex items-center justify-center">`;
                         if (hasChildren) {
@@ -310,8 +323,8 @@
                         return html;
                     }
 
-                        const rootHtml = `<ul class="tree-ul tree-root">${renderNode(rootNode, true)}</ul>`;
-                        treeContainer.innerHTML = rootHtml;
+                    const rootHtml = `<ul class="tree-ul tree-root">${renderNode(rootNode, true)}</ul>`;
+                    treeContainer.innerHTML = rootHtml;
 
                 } catch (error) {
                     console.error(error);
