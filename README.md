@@ -2,7 +2,7 @@
 
 # Byte-knight — Arch Linux Fork
 
-**Arch Linux paket deposu — [Neuwj](https://github.com/Neuwj-00)/byte-knight projesinin Arch fork'u**
+**Arch Linux package repository — Fork of [Neuwj](https://github.com/Neuwj-00)/byte-knight**
 
 ![GPL v3](https://img.shields.io/badge/License-GPL_v3-blue?style=for-the-badge&logo=gnu&logoColor=white)
 ![Arch Linux](https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=archlinux&logoColor=white)
@@ -15,50 +15,50 @@
 
 ---
 
-## Hakkinda
+## Overview
 
-Bu depo, [Neuwj-00/byte-knight](https://github.com/Neuwj-00/byte-knight) projesinin **Arch Linux** dagitimina yonelik fork'udur. Amaci, orijinal projede yer alan yuksek performansli C++ terminal araclarini Arch Linux ve turevi dagitimlar (Manjaro, EndeavourOS, Garuda vb.) icin paketlemek ve dagitmaktir.
+This repository is a fork of [Neuwj-00/byte-knight](https://github.com/Neuwj-00/byte-knight), adapted specifically for **Arch Linux** and its derivatives (Manjaro, EndeavourOS, Garuda, etc.).
 
-Orijinal proje Debian (`.deb`) ve Red Hat (`.rpm`) paketlerini desteklerken, bu fork Arch Linux ekosistemine odaklanir.
-
----
-
-## Dahil Edilen Araclar
-
-- **pacForge** — Evrensel Linux paketleme sihirbazi. `.deb` ve `.rpm` paketlerinin olusturulmasini otomatiklestirir.
-- **repoForge** — Yerel veya uzak APT/RPM paket depolari olusturmak ve yonetmek icin ozel bir arac.
-- **foldertree (ftr)** — Dizin yapisini gorsellestirir ve agac formatinda yazdiran ozellestirilebilir bir CLI araci.
-- **warp / warpcplus** — Ag islemleri, tunelleme ve baglanti yonetimi icin tasarlanmis bir C++ araci.
+The original project provides a suite of high-performance C++ terminal utilities with packaging support for Debian (`.deb`) and Red Hat (`.rpm`) ecosystems. This fork focuses on bringing those tools to the Arch Linux ecosystem.
 
 ---
 
-## Kurulum (Arch Linux)
+## Included Tools
 
-### Kaynaktan Derleme
+- **pacForge** — Universal Linux packaging wizard. Automates the creation of `.deb` and `.rpm` packages with licensing, metadata, and directory structuring.
+- **repoForge** — Specialized utility for creating, managing, and maintaining local or remote APT and RPM package repositories.
+- **foldertree (ftr)** — Highly customizable CLI tool that visualizes and prints directory tree structures.
+- **warp / warpcplus** — C++ utility engineered for network operations, tunneling, and connectivity management.
+
+---
+
+## Installation
+
+### Arch Linux — Build from Source
 
 ```bash
-# Depoyu klonlayin
+# Clone the repository
 git clone https://github.com/Vniverse77/byte-knight.git
 cd byte-knight/src
 
-# g++ ile derleyin (ornek: foldertree)
+# Compile with g++ (example: foldertree)
 g++ -std=c++17 -O2 -Wl,-z,relro,-z,now -o ftr foldertree.cpp
 
-# Derlenmis ikili dosyayi sisteme yukleyin
+# Install the compiled binary to your system path
 sudo install -Dm755 ftr /usr/bin/ftr
 ```
 
-### Diger Dagitimlar
+### Other Distributions
 
-Debian/Ubuntu ve Fedora/RHEL kurulumu icin orijinal projeye basvurun: [Neuwj-00/byte-knight](https://github.com/Neuwj-00/byte-knight)
+For Debian/Ubuntu and Fedora/RHEL installation instructions, refer to the original project: [Neuwj-00/byte-knight](https://github.com/Neuwj-00/byte-knight)
 
 ---
 
-## Depo Yapisi
+## Repository Structure
 
 ```
 byte-knight/
-├── src/                   # Kaynak kodlar
+├── src/                   # Source code
 │   ├── foldertree.cpp
 │   ├── pacForge.cpp
 │   ├── repoForge.cpp
@@ -66,30 +66,43 @@ byte-knight/
 │   ├── gitForge.rs
 │   ├── uninstallerdeb.py
 │   └── RepositoryInstaller.sh
-├── keys/                  # GPG imzalama anahtarlari
-├── index.html             # Web sayfasi
-├── LICENSE                # GNU GPLv3 Lisans
+├── keys/                  # GPG signing keys
+├── index.html             # Web server entry point
+├── LICENSE                # GNU GPLv3 License
 └── README.md
 ```
 
 ---
 
-## Katki
+## Contributing
 
-Katkilar, hata bildirimleri ve ozellik istekleri memnuniyetle karsilanir! [Issues](https://github.com/Vniverse77/byte-knight/issues) sayfasindan bildirimde bulunabilirsiniz.
-
----
-
-## Iletisim
-
-- **Fork sahibi:** [Vniverse77](https://github.com/Vniverse77)
-- **Orijinal gelistirici:** [Neuwj](https://github.com/Neuwj-00)
-- **Orijinal proje:** [neuwj-00.github.io/byte-knight](https://neuwj-00.github.io/byte-knight/)
+Contributions, bug reports, and feature requests are welcome. Feel free to open an issue or submit a pull request on the [Issues](https://github.com/Vniverse77/byte-knight/issues) page.
 
 ---
 
-## Lisans
+## Contact
 
-Bu proje [GNU General Public License v3.0](LICENSE) lisansi altinda acik kaynaklidir.
+**Fork maintainer:**
 
-Orijinal proje [Neuwj](https://github.com/Neuwj-00) tarafindan olusturulmustur.
+| | |
+|---|---|
+| Developer | Vniverse77 |
+| GitHub | [github.com/Vniverse77](https://github.com/Vniverse77) |
+| Role | Arch Linux packaging and distribution |
+
+**Original project:**
+
+| | |
+|---|---|
+| Developer | Neuwj |
+| GitHub | [github.com/Neuwj-00](https://github.com/Neuwj-00) |
+| Website | [neuwj-00.github.io/byte-knight](https://neuwj-00.github.io/byte-knight/) |
+| Email | neuwj@bk.ru |
+
+---
+
+## License
+
+This project is open-source and licensed under the [GNU General Public License v3.0](LICENSE).
+
+Originally created by [Neuwj](https://github.com/Neuwj-00). Forked and maintained for Arch Linux by [Vniverse77](https://github.com/Vniverse77).
