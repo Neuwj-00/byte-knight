@@ -128,7 +128,6 @@
                 justify-content: center;
             }
 
-            /* Table Styles Eklendi */
             .markdown-body table {
                 border-spacing: 0;
                 border-collapse: collapse;
@@ -154,24 +153,21 @@
             .markdown-body table tr:nth-child(2n) {
                 background-color: #161b22;
             }
-            /* Table Styles Bitiş */
 
-            /* Details/Summary (Açılır Kapanır Menüleri İptal Etme) Stilleri */
             .markdown-body details summary {
-                list-style: none !important; /* Standart oku gizle */
-                pointer-events: none; /* Tıklanabilirliği kapat */
+                list-style: none !important;
+                pointer-events: none;
                 cursor: default;
                 font-weight: 600;
                 margin-top: 16px;
                 margin-bottom: 8px;
             }
             .markdown-body details summary::-webkit-details-marker {
-                display: none !important; /* Safari/Chrome özel oku gizle */
+                display: none !important;
             }
             .markdown-body details {
                 margin-bottom: 16px;
             }
-            /* Details/Summary Bitiş */
 
             .pl-c { color: #8b949e; }
             .pl-c1 { color: #79c0ff; }
@@ -492,7 +488,6 @@
                         readmeContainer.innerHTML = html;
                         formatCodeBlocks(readmeContainer);
 
-                        // Tüm <details> etiketlerini otomatik açık hale getir
                         readmeContainer.querySelectorAll('details').forEach(detail => {
                             detail.setAttribute('open', 'true');
                         });
