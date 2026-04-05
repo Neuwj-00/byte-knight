@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📦 Byte-Knight
+# Byte-Knight
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-Neuwj--00-pink?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/Neuwj-00)
 
@@ -20,13 +20,13 @@
 
 ---
 
-## 🛡️ Overview
+## Overview
 
 **Byte-Knight** is an integrated collection of high-performance system utilities designed for Linux, serving as a comprehensive software distribution hub. Beyond being a simple code repository, it provides an end-to-end hybrid infrastructure covering every stage of the software lifecycle — from development and packaging to digital signing and native distribution.
 
 ---
 
-## 🧩 Core Pillars
+## Core Pillars
 
 **1. Hybrid Multi-Language Stack**
 The project leverages C++ for maximum system-level speed, Rust for memory safety and modern workflows, and Python for flexible automation. This "right tool for the right job" approach ensures that Byte-Knight utilities run with native performance.
@@ -39,7 +39,7 @@ Every binary distributed via Byte-Knight is digitally signed using GPG (GNU Priv
 
 ---
 
-## 🏗️ The Forge Series — Backbone of the Pipeline
+## The Forge Series — Backbone of the Pipeline
 
 The "Forge" series consists of three core engines that drive the production and distribution cycles of the Byte-Knight ecosystem:
 
@@ -49,7 +49,7 @@ The "Forge" series consists of three core engines that drive the production and 
 | **`repoForge`** | C++ | The Distributor | The brain of the distribution center. Manages the repository hierarchy, generates APT/DNF metadata indexes (`Packages.gz`, `repomd.xml`), and handles GPG signing protocols. |
 | **`gitForge`** | Rust | The Automator | A high-performance bridge that automates development and deployment workflows — Git operations, versioning, and CI/CD pipelines — ensuring all Forge components work in perfect harmony. |
 
-## 🌀 System & Maintenance Modules
+## System & Maintenance Modules
 
 | Tool | Language | Description |
 |------|----------|-------------|
@@ -62,7 +62,7 @@ The "Forge" series consists of three core engines that drive the production and 
 
 ## Installation
 
-### 🛡️ 1. Debian-based Systems (Debian, Ubuntu, MX Linux, etc.)
+### 1. Debian-based Systems (Debian, Ubuntu, MX Linux, etc.)
 
 **Option A — Manual Installation (Step-by-Step):**
 ```bash
@@ -86,7 +86,7 @@ sudo ./RepositoryInstaller-DEB
 
 ---
 
-### 🛡️ 2. Fedora & RHEL-based Systems (Fedora, CentOS, etc.)
+### 2. Fedora & RHEL-based Systems (Fedora, CentOS, etc.)
 
 **Option A — Manual Installation (Step-by-Step):**
 ```bash
@@ -113,7 +113,7 @@ sudo ./RepositoryInstaller-RHEL
 
 ---
 
-### 🔨 3. Build from Source
+### 3. Build from Source
 
 ```bash
 # Clone the repository
@@ -129,13 +129,13 @@ sudo install -Dm755 ftr /usr/bin/ftr
 
 ---
 
-### 🔷 4. Arch-based Distributions
+### 4. Arch-based Distributions
 
 For Arch-based distributions, please refer to the following fork: [Arch-byte-knight](https://github.com/Neuwj-00/byte-knight/tree/Vniverse77-Arch-patch).
 
 ---
 
-## 📄 Installer Script Sources
+## Installer Script Sources
 
 <details>
 <summary>src/RepositoryInstaller-DEB</summary>
@@ -143,11 +143,11 @@ For Arch-based distributions, please refer to the following fork: [Arch-byte-kni
 ```bash
 #!/bin/bash
 set -e
-echo "🛡️ Byte-Knight: Configuring APT Repository..."
+echo "Byte-Knight: Configuring APT Repository..."
 wget -qO - https://neuwj-00.github.io/byte-knight/keys/public.key | sudo gpg --dearmor -o /usr/share/keyrings/byte-knight-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/byte-knight-archive-keyring.gpg] https://neuwj-00.github.io/byte-knight/debian stable main" | sudo tee /etc/apt/sources.list.d/byte-knight.list
 sudo apt update
-echo "✅ Byte-Knight DEB Repo is ready! You can now run: sudo apt install pacforge"
+echo "Byte-Knight DEB Repo is ready! You can now run: sudo apt install pacforge"
 ```
 
 </details>
@@ -158,7 +158,7 @@ echo "✅ Byte-Knight DEB Repo is ready! You can now run: sudo apt install pacfo
 ```bash
 #!/bin/bash
 set -e
-echo "🛡️ Byte-Knight: Configuring DNF/YUM Repository..."
+echo "Byte-Knight: Configuring DNF/YUM Repository..."
 sudo tee /etc/yum.repos.d/byte-knight.repo <<EOF
 [byte-knight]
 name=Byte-Knight Official Repository
@@ -167,14 +167,14 @@ enabled=1
 gpgcheck=1
 gpgkey=https://neuwj-00.github.io/byte-knight/keys/public.key
 EOF
-echo "✅ Byte-Knight RHEL Repo is ready! You can now run: sudo dnf install warpcplus"
+echo "Byte-Knight RHEL Repo is ready! You can now run: sudo dnf install warpcplus"
 ```
 
 </details>
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 byte-knight/
@@ -193,7 +193,7 @@ byte-knight/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions, bug reports, and feature requests are always welcome! Feel free to open an issue or submit a pull request on the [Issues page](https://github.com/Neuwj-00/byte-knight/issues).
 
@@ -210,7 +210,7 @@ Contributions, bug reports, and feature requests are always welcome! Feel free t
 
 ---
 
-## 📄 License
+## License
 
 This project is open-source and licensed under the **GNU General Public License v3.0**.
 
