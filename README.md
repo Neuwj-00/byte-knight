@@ -48,20 +48,70 @@ Every binary distributed via Byte-Knight is digitally signed using GPG (GNU Priv
 
 The "Forge" series consists of three core engines that drive the production and distribution cycles of the Byte-Knight ecosystem.
 
-| Tool | Language | Role | Description |
-|------|:--------:|------|-------------|
-| **`pacForge`** | C++ | The Builder | Takes raw source code or binaries and converts them into professional, signed `.deb` and `.rpm` packages — the most optimized path from "code to package." |
-| **`repoForge`** | C++ | The Distributor | Manages the repository hierarchy, generates APT/DNF metadata indexes (`Packages.gz`, `repomd.xml`), and handles GPG signing protocols. |
-| **`gitForge`** | Rust | The Automator | Automates development and deployment workflows — Git operations, versioning, and CI/CD pipelines — ensuring all Forge components work in perfect harmony. |
+<table>
+  <thead>
+    <tr>
+      <th>Tool</th>
+      <th>Language</th>
+      <th>Role</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>pacForge</code></td>
+      <td align="center">C++</td>
+      <td><b>The Builder</b></td>
+      <td>Takes raw source code or binaries and converts them into professional, signed <code>.deb</code> and <code>.rpm</code> packages — the most optimized path from "code to package."</td>
+    </tr>
+    <tr>
+      <td><code>repoForge</code></td>
+      <td align="center">C++</td>
+      <td><b>The Distributor</b></td>
+      <td>Manages the repository hierarchy, generates APT/DNF metadata indexes (<code>Packages.gz</code>, <code>repomd.xml</code>), and handles GPG signing protocols.</td>
+    </tr>
+    <tr>
+      <td><code>gitForge</code></td>
+      <td align="center">Rust</td>
+      <td><b>The Automator</b></td>
+      <td>Automates development and deployment workflows — Git operations, versioning, and CI/CD pipelines — ensuring all Forge components work in perfect harmony.</td>
+    </tr>
+  </tbody>
+</table>
 
 ### System & Maintenance Modules
 
-| Tool | Language | Description |
-|------|:--------:|-------------|
-| **`warp`** | C++ | A performance-oriented system utility designed for low-level optimization and high-speed process transitions. |
-| **`foldertree` / `ftr`** | C++ | A high-speed analysis tool that scans complex file systems and generates visual maps (HTML/Tree formats). |
-| **`uninstallerdeb`** | Python | Ensures clean and safe removal of packages, leaving no residues on the system. |
-| **`RepositoryInstaller`** | Shell | Imports GPG keys and configures the repository on the target system with a single command. |
+<table>
+  <thead>
+    <tr>
+      <th>Tool</th>
+      <th>Language</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>warp</code></td>
+      <td align="center">C++</td>
+      <td>A performance-oriented system utility designed for low-level optimization and high-speed process transitions.</td>
+    </tr>
+    <tr>
+      <td><code>foldertree</code> / <code>ftr</code></td>
+      <td align="center">C++</td>
+      <td>A high-speed analysis tool that scans complex file systems and generates visual maps (HTML/Tree formats).</td>
+    </tr>
+    <tr>
+      <td><code>uninstallerdeb</code></td>
+      <td align="center">Python</td>
+      <td>Ensures clean and safe removal of packages, leaving no residues on the system.</td>
+    </tr>
+    <tr>
+      <td><code>RepositoryInstaller</code></td>
+      <td align="center">Shell</td>
+      <td>Imports GPG keys and configures the repository on the target system with a single command.</td>
+    </tr>
+  </tbody>
+</table>
 
 <br>
 
