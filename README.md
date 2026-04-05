@@ -62,7 +62,7 @@ The "Forge" series consists of three core engines that drive the production and 
 
 ## Installation
 
-### 1. Debian-based Systems (Debian, Ubuntu, MX Linux, etc.)
+### 1. Debian-based Systems (Debian, Ubuntu, etc.)
 
 **Option A — Manual Installation (Step-by-Step):**
 ```bash
@@ -86,7 +86,7 @@ sudo ./RepositoryInstaller-DEB
 
 ---
 
-### 2. Fedora & RHEL-based Systems (Fedora, CentOS, etc.)
+### 2. Fedora & RHEL-based Systems (Fedora, RedHat, etc.)
 
 **Option A — Manual Installation (Step-by-Step):**
 ```bash
@@ -131,7 +131,7 @@ sudo install -Dm755 ftr /usr/bin/ftr
 
 ### 4. Arch-based Distributions
 
-For Arch-based distributions, please refer to the following fork: [Arch-byte-knight](https://github.com/Neuwj-00/byte-knight/tree/Vniverse77-Arch-patch).
+For Arch-based distributions, please refer to the following fork: [Arch-byte-knight](https://github.com/Vniverse77/byte-knight).
 
 ---
 
