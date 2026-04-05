@@ -1,252 +1,217 @@
 <div align="center">
 
+# 📦 Byte-Knight
 
-
-# 📦 Byte-knight
-
-# [![Sponsor](https://img.shields.io/badge/Sponsor-Neuwj--00-pink?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/Neuwj-00)
+[![Sponsor](https://img.shields.io/badge/Sponsor-Neuwj--00-pink?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/Neuwj-00)
 
 **A Custom Linux Package Repository by Neuwj**
 
-
-
-
-
 ![GPL v3](https://img.shields.io/badge/License-GPL_v3-blue?style=for-the-badge&logo=gnu&logoColor=white)
-
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-E9430F?style=for-the-badge&logo=ubuntu&logoColor=white)
-
 ![Debian](https://img.shields.io/badge/Debian-D70A53?style=for-the-badge&logo=debian&logoColor=white)
-
 ![Fedora](https://img.shields.io/badge/Fedora-51A2DA?style=for-the-badge&logo=fedora&logoColor=white)
-
 ![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
-
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-
 ![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
-
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-
 ![Built For Linux](https://img.shields.io/badge/Built_for-Linux-2ea44f?style=for-the-badge&logo=linux&logoColor=white)
-
-
-
-
 
 </div>
 
+---
 
+## 🛡️ Overview
+
+**Byte-Knight** is an integrated collection of high-performance system utilities designed for Linux, serving as a comprehensive software distribution hub. Beyond being a simple code repository, it provides an end-to-end hybrid infrastructure covering every stage of the software lifecycle — from development and packaging to digital signing and native distribution.
 
 ---
 
+## 🧩 Core Pillars
 
+**1. Hybrid Multi-Language Stack**
+The project leverages C++ for maximum system-level speed, Rust for memory safety and modern workflows, and Python for flexible automation. This "right tool for the right job" approach ensures that Byte-Knight utilities run with native performance.
 
-## Overview
+**2. Professional Packaging & Distribution**
+Byte-Knight hosts its own fully-fledged software repository. Tools are transformed into professional-grade `.deb` (Debian/Ubuntu/MX Linux) and `.rpm` (Fedora/RHEL) packages, fully compatible with standard system package managers like APT and DNF.
 
-
-
-Byte Knight: High-Performance Linux Utility Suite & Distribution Repository
-
-
-
-This repository serves as the official source and distribution hub for the Byte Knight suite—an integrated collection of high-performance system utilities developed using a multi-language stack, including C++, Rust, Python, and Shell.
-
-
-
-Designed for efficiency and scalability, the suite provides essential tools for advanced Linux system management. This repository is fully structured as a production-grade package distribution center, offering natively signed and verified installations for both Debian-based (.deb) and Red Hat-based (.rpm) Linux environments.
-
-
-
-Security & Integrity: All binary distributions undergo automated security auditing via VirusTotal and GitHub Actions to ensure software integrity and system safety.
-
-
+**3. Security-First Architecture**
+Every binary distributed via Byte-Knight is digitally signed using GPG (GNU Privacy Guard). The entire distribution pipeline is audited via GitHub Actions to maintain the highest security standards for the end-user.
 
 ---
 
+## 🏗️ The Forge Series — Backbone of the Pipeline
 
+The "Forge" series consists of three core engines that drive the production and distribution cycles of the Byte-Knight ecosystem:
 
-## 🛠️ Included Tools
+| Tool | Language | Role | Description |
+|------|----------|------|-------------|
+| **`pacForge`** | C++ | The Builder | The production heart of the ecosystem. Takes raw source code or binaries and converts them into professional, signed `.deb` and `.rpm` packages — the most optimized path from "code to package." |
+| **`repoForge`** | C++ | The Distributor | The brain of the distribution center. Manages the repository hierarchy, generates APT/DNF metadata indexes (`Packages.gz`, `repomd.xml`), and handles GPG signing protocols. |
+| **`gitForge`** | Rust | The Automator | A high-performance bridge that automates development and deployment workflows — Git operations, versioning, and CI/CD pipelines — ensuring all Forge components work in perfect harmony. |
 
+## 🌀 System & Maintenance Modules
 
-
-* **`pacForge` (C++)** — *The Universal Linux Packaging Wizard.* Automates the creation of `.deb` and `.rpm` packages, fully handling licensing, metadata generation, and directory structuring.
-
-* **`repoForge` (C++)** — *The Repository Architect.* A specialized utility for creating, managing, and maintaining local or remote APT and RPM package repositories.
-
-* **`foldertree / ftr` (C++)** — *The Directory Visualizer.* A highly customizable CLI tool that visualizes and prints the tree structure of specified directories with precision.
-
-* **`warp / warpcplus` (C++)** — *The Network Forger.* An advanced utility engineered for network operations, secure tunneling, and connectivity management.
-
-* **`gitForge` (Rust)** — A memory-safe, high-speed utility designed for Git repository tracking and automation.
-
-* **`uninstallerdeb` (Python)** — A flexible script for safely and cleanly removing installed Debian packages.
-
-* **`RepositoryInstaller` (Shell)** — The automated deployment script that seamlessly configures the Byte Knight APT/RPM repositories on your local machine.
+| Tool | Language | Description |
+|------|----------|-------------|
+| **`warp`** | C++ | A performance-oriented system utility designed for low-level optimization and high-speed process transitions. |
+| **`foldertree` / `ftr`** | C++ | A high-speed analysis tool that scans complex file systems and generates visual maps (HTML/Tree formats). |
+| **`uninstallerdeb`** | Python | A maintenance module that ensures clean and safe removal of packages, leaving no residues on the system. |
+| **`RepositoryInstaller`** | Shell | A user-friendly script that imports GPG keys and configures the repository on the target system with a single command. |
 
 ---
-
-
 
 ## Installation
 
-#
+### 🛡️ 1. Debian-based Systems (Debian, Ubuntu, MX Linux, etc.)
 
-### Debian / Ubuntu
-
-
-
+**Option A — Manual Installation (Step-by-Step):**
 ```bash
+# 1. Import the GPG Public Key for package verification
+wget -qO - https://neuwj-00.github.io/byte-knight/keys/public.key | sudo gpg --dearmor -o /usr/share/keyrings/byte-knight-archive-keyring.gpg
 
-# Download the script from the Releases section and run it with this command
+# 2. Add the Byte-Knight repository to your sources list
+echo "deb [signed-by=/usr/share/keyrings/byte-knight-archive-keyring.gpg] https://neuwj-00.github.io/byte-knight/debian stable main" | sudo tee /etc/apt/sources.list.d/byte-knight.list
 
-chmod +x "RepositoryInstaller.sh" && ./"RepositoryInstaller.sh"
-
-```
-
-
-
-```bash
-
-# Manual install
-
-# Add the GPG key for secure package verification
-
-curl -fsSL [https://neuwj-00.github.io/byte-knight/keys/public.key](https://neuwj-00.github.io/byte-knight/keys/public.key) | sudo gpg --dearmor -o /usr/share/keyrings/byte-knight-keyring.gpg
-
-
-
-# Add the official repository to your APT sources
-
-echo "deb [signed-by=/usr/share/keyrings/byte-knight-keyring.gpg] [https://neuwj-00.github.io/byte-knight/debian](https://neuwj-00.github.io/byte-knight/debian) stable main" | sudo tee /etc/apt/sources.list.d/byte-knight.list
-
-
-
-# Update package lists and install your desired tools
-
+# 3. Update system package lists and install your desired tools
 sudo apt update
-
-sudo apt install pacforge repoforge ftr warpcplus
-
+sudo apt install pacforge repoforge
 ```
 
-### Fedora / RHEL
-
+**Option B — Automated Installation (Scripted):**
 ```bash
+wget https://neuwj-00.github.io/byte-knight/src/RepositoryInstaller-DEB
+chmod +x RepositoryInstaller-DEB
+sudo ./RepositoryInstaller-DEB
+```
 
-Bash
+---
 
-# Add the repository configuration
+### 🛡️ 2. Fedora & RHEL-based Systems (Fedora, CentOS, etc.)
 
+**Option A — Manual Installation (Step-by-Step):**
+```bash
+# 1. Create the repository configuration file
 sudo tee /etc/yum.repos.d/byte-knight.repo <<EOF
-
 [byte-knight]
-
-name=byte-knight Official Repository
-
-baseurl=[https://neuwj-00.github.io/byte-knight/rpm/](https://neuwj-00.github.io/byte-knight/rpm/)
-
+name=Byte-Knight Official Repository
+baseurl=https://neuwj-00.github.io/byte-knight/rpm/
 enabled=1
-
-gpgcheck=0
-
+gpgcheck=1
+gpgkey=https://neuwj-00.github.io/byte-knight/keys/public.key
 EOF
 
+# 2. Install Byte-Knight utilities via DNF
+sudo dnf install warpcplus
+```
 
+**Option B — Automated Installation (Scripted):**
+```bash
+wget https://neuwj-00.github.io/byte-knight/src/RepositoryInstaller-RHEL
+chmod +x RepositoryInstaller-RHEL
+sudo ./RepositoryInstaller-RHEL
+```
 
-# Install the packages
+---
 
-sudo dnf install pacforge repoforge warpcplus
+### 🔨 3. Build from Source
 
-Build from Source
-
-Bash
-
+```bash
 # Clone the repository
-
-git clone [https://github.com/Neuwj-00/byte-knight.git](https://github.com/Neuwj-00/byte-knight.git)
-
+git clone https://github.com/Neuwj-00/byte-knight.git
 cd byte-knight/source
 
-
-
-# Compile the tools using g++ (Example for foldertree)
-
+# Compile the tools using g++ (example: foldertree)
 g++ -std=c++17 -O2 -Wl,-z,relro,-z,now -o ftr foldertree.cpp
 
-```
-
-### Arch  distributions
-
-
-
-### For Arch-based distributions, please refer to the following fork: [Arch-byte-knight](https://github.com/Neuwj-00/byte-knight/tree/Vniverse77-Arch-patch).
-
-
-
 # Install the compiled binary to your system path
-
-```
-
 sudo install -Dm755 ftr /usr/bin/ftr
-
-📁 Repository Structure
-
-Plaintext
-
-byte-knight/
-
-├── debian/                # APT repository files & pre-built .deb packages
-
-├── rpm/                   # DNF/YUM repository files & pre-built .rpm packages
-
-├── source/                # Main C++ source codes
-
-│   ├── foldertree.cpp
-
-│   ├── pacForge.cpp
-
-│   ├── repoForge.cpp
-
-│   └── warp.cpp
-
-├── keys/                  # GPG signing keys (public.key)
-
-├── index.html             # Web server entry point
-
-├── LICENSE                # GNU GPLv3 License
-
-└── README.md              # Documentation
-
-🤝 Contributing
-
-Contributions, bug reports, and feature requests are always welcome! Feel free to open an issue or submit a pull request on the Issues page.
-
 ```
 
+---
 
+### 🔷 4. Arch-based Distributions
 
-### 📫 Contact
+For Arch-based distributions, please refer to the following fork: [Arch-byte-knight](https://github.com/Neuwj-00/byte-knight/tree/Vniverse77-Arch-patch).
 
-Developer: Neuwj
+---
 
+## 📄 Installer Script Sources
 
+<details>
+<summary>src/RepositoryInstaller-DEB</summary>
 
-GitHub: [Neuwj-00](https://github.com/Neuwj-00)
+```bash
+#!/bin/bash
+set -e
+echo "🛡️ Byte-Knight: Configuring APT Repository..."
+wget -qO - https://neuwj-00.github.io/byte-knight/keys/public.key | sudo gpg --dearmor -o /usr/share/keyrings/byte-knight-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/byte-knight-archive-keyring.gpg] https://neuwj-00.github.io/byte-knight/debian stable main" | sudo tee /etc/apt/sources.list.d/byte-knight.list
+sudo apt update
+echo "✅ Byte-Knight DEB Repo is ready! You can now run: sudo apt install pacforge"
+```
 
+</details>
 
+<details>
+<summary>src/RepositoryInstaller-RHEL</summary>
 
-Website: [neuwj-00.github.io/byte-knight](https://neuwj-00.github.io/byte-knight/)
+```bash
+#!/bin/bash
+set -e
+echo "🛡️ Byte-Knight: Configuring DNF/YUM Repository..."
+sudo tee /etc/yum.repos.d/byte-knight.repo <<EOF
+[byte-knight]
+name=Byte-Knight Official Repository
+baseurl=https://neuwj-00.github.io/byte-knight/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://neuwj-00.github.io/byte-knight/keys/public.key
+EOF
+echo "✅ Byte-Knight RHEL Repo is ready! You can now run: sudo dnf install warpcplus"
+```
 
+</details>
 
+---
 
-Email: neuwj@bk.ru
+## 📁 Repository Structure
 
+```
+byte-knight/
+├── debian/          # APT repository files & pre-built .deb packages
+├── rpm/             # DNF/YUM repository files & pre-built .rpm packages
+├── source/          # Main C++ source files
+│   ├── foldertree.cpp
+│   ├── pacForge.cpp
+│   ├── repoForge.cpp
+│   └── warp.cpp
+├── keys/            # GPG signing keys (public.key)
+├── index.html       # Web server entry point
+├── LICENSE          # GNU GPLv3 License
+└── README.md        # Documentation
+```
 
+---
 
-📄 !!License!!
+## 🤝 Contributing
 
-### This project is open-source and licensed under the GNU General Public License v3.0.
+Contributions, bug reports, and feature requests are always welcome! Feel free to open an issue or submit a pull request on the [Issues page](https://github.com/Neuwj-00/byte-knight/issues).
 
-Created by [Neuwj](https://github.com/Neuwj-00) 
+---
 
+## 📫 Contact
+
+| | |
+|---|---|
+| **Developer** | Neuwj |
+| **GitHub** | [Neuwj-00](https://github.com/Neuwj-00) |
+| **Website** | [neuwj-00.github.io/byte-knight](https://neuwj-00.github.io/byte-knight/) |
+| **Email** | neuwj@bk.ru |
+
+---
+
+## 📄 License
+
+This project is open-source and licensed under the **GNU General Public License v3.0**.
+
+Created by [Neuwj](https://github.com/Neuwj-00).
