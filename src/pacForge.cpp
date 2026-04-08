@@ -7,6 +7,7 @@
 #include <thread>
 #include <chrono>
 #include <cctype>
+#include <stdexcept>
 
 namespace fs = std::filesystem;
 
@@ -18,6 +19,13 @@ const std::string YELLOW = "\033[33m";
 const std::string RED = "\033[31m";
 const std::string CYAN = "\033[36m";
 
+class AbortOperation : public std::exception {
+public:
+    const char* what() const noexcept override {
+        return "Operation aborted by user.";
+    }
+};
+
 void clearScreen() {
     std::system("clear");
 }
@@ -26,15 +34,21 @@ void sleepMs(int ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
+void waitForEnter() {
+    std::cout << "\n" << CYAN << "Press [ENTER] to continue..." << RESET;
+    std::string dummy;
+    if (!std::getline(std::cin, dummy)) std::exit(0);
+}
+
 void printBanner() {
     clearScreen();
     std::cout << BOLD << BLUE << "=================================================\n" << RESET;
     std::cout << BOLD << YELLOW << "   .===.   " << RESET << BOLD << "PACKAGE FORGE\n";
-    std::cout << BOLD << YELLOW << "   | " << CYAN << "+" << YELLOW << " |   " << RESET << "C++ Packaging Wizard | v0.1.0\n";
+    std::cout << BOLD << YELLOW << "   | " << CYAN << "*" << YELLOW << " |   " << RESET << "C++ Packaging Wizard | v0.1.14\n";
     std::cout << BOLD << YELLOW << "    \\ /    " << CYAN << "Created by Neuwj - neuwj@bk.ru\n";
     std::cout << BOLD << YELLOW << "     V     " << RESET << "\n";
     std::cout << BOLD << BLUE << "=================================================\n" << RESET;
-    std::cout << CYAN << " Tip: Type '0' anytime to open the Example Guide!\n\n" << RESET;
+    std::cout << CYAN << " Tip: Type '0' for Guide, or 'p' anytime to Cancel!\n\n" << RESET;
 }
 
 void printError(const std::string& message) {
@@ -51,88 +65,97 @@ bool isValidStrictFormat(const std::string& str) {
     return true;
 }
 
-void openGuide() {
-    std::ofstream guideFile("forge_guide.sh");
-    guideFile << "#!/bin/bash\n"
-    << "echo -e \"\\033[1;36m========================================\\033[0m\"\n"
-    << "echo -e \"\\033[1;36m          PACKAGE FORGE GUIDE           \\033[0m\"\n"
-    << "echo -e \"\\033[1;36m========================================\\033[0m\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;33m[?] Package Name:\\033[0m myapp\"\n"
-    << "echo -e \"    -> (Only lowercase letters, no spaces)\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;33m[?] Version:\\033[0m 1.0.0\"\n"
-    << "echo -e \"    -> (Version number of your app)\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;33m[?] Architecture:\\033[0m amd64\"\n"
-    << "echo -e \"    -> (Usually 'amd64' for 64-bit Debian systems)\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;33m[?] Release:\\033[0m 1\"\n"
-    << "echo -e \"    -> (RPM build release number, usually 1)\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;33m[?] Maintainer:\\033[0m Developer <dev@example.com>\"\n"
-    << "echo -e \"    -> (Your name and email)\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;33m[?] Description:\\033[0m A great terminal application\"\n"
-    << "echo -e \"    -> (Short info about your package, optional)\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;33m[?] Binary Path:\\033[0m /home/user/Documents/myapp\"\n"
-    << "echo -e \"    -> (Full path to your compiled binary on YOUR system)\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;33m[?] Install Dir:\\033[0m /usr/bin\"\n"
-    << "echo -e \"    -> (Where it should be installed on the USER's system)\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;33m[?] Output Directory:\\033[0m /home/user/Desktop\"\n"
-    << "echo -e \"    -> (Where the final package should be saved)\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;35m--- SOFTWARE LICENSES ---\\033[0m\"\n"
-    << "echo -e \"  1. MIT: Most popular, simplest. \\\"Do what you want\\\".\"\n"
-    << "echo -e \"  2. Apache 2.0: Corporate favorite. Protects patents.\"\n"
-    << "echo -e \"  3. GNU GPL v3.0: Copyleft: If you use it, yours must be open.\"\n"
-    << "echo -e \"  4. GNU GPL v2.0: Linux kernel license. Industry standard.\"\n"
-    << "echo -e \"  5. GNU LGPL v3.0: Ideal for libs, allows commercial linking.\"\n"
-    << "echo -e \"  6. GNU AGPL v3.0: Cloud/Web; requires network source sharing.\"\n"
-    << "echo -e \"  7. BSD 3-Clause: Like MIT but protects name/endorsement.\"\n"
-    << "echo -e \"  8. BSD 2-Clause: Simpler BSD version (FreeBSD choice).\"\n"
-    << "echo -e \"  9. Mozilla (MPL 2.0): File-based copyleft.\"\n"
-    << "echo -e \" 10. Eclipse (EPL 2.0): Used in enterprise Java projects.\"\n"
-    << "echo -e \" 11. ISC License: BSD/MIT hybrid, very short and clear.\"\n"
-    << "echo -e \" 12. The Unlicense: Declares code completely public domain.\"\n"
-    << "echo -e \" 13. Creative Commons BY: \\\"Give attribution\\\" license.\"\n"
-    << "echo -e \" 14. CC BY-SA: Share alike (Wikipedia style).\"\n"
-    << "echo -e \" 15. CC0 (Zero): No copyright claimed at all.\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;35m--- IT CERTIFICATIONS (Bonus) ---\\033[0m\"\n"
-    << "echo -e \" 16. LPI Linux Essentials: Official entry ticket to Linux.\"\n"
-    << "echo -e \" 17. LPIC-1: Proof that you are a Linux Administrator.\"\n"
-    << "echo -e \" 18. CompTIA A+: The \\\"driver's license\\\" for IT basics.\"\n"
-    << "echo -e \" 19. CompTIA Network+: Starting point for networking.\"\n"
-    << "echo -e \" 20. CompTIA Security+: Respected entry to cybersecurity.\"\n"
-    << "echo -e \" 21. Cisco CCNA: Most recognized network certification.\"\n"
-    << "echo -e \" 22. AWS Solutions Architect: World leader in cloud.\"\n"
-    << "echo -e \" 23. Azure Administrator (AZ-104): Corporate cloud pref.\"\n"
-    << "echo -e \" 24. Google IT Support Certificate: Great for industry entry.\"\n"
-    << "echo -e \" 25. Red Hat Certified Admin (RHCSA): Hard & highly respected.\"\n"
-    << "echo -e \" 26. CISSP: Highest level professional security license.\"\n"
-    << "echo -e \" 27. CEH (Ethical Hacker): The \\\"white hat\\\" hacker license.\"\n"
-    << "echo -e \" 28. CKA (Kubernetes Admin): Popular modern DevOps cert.\"\n"
-    << "echo -e \" 29. PMP: Project management license (for large teams).\"\n"
-    << "echo -e \" 30. ITIL 4 Foundation: Standard for IT service processes.\"\n"
-    << "echo -e \"\"\n"
-    << "echo -e \"\\033[1;32mPress [ENTER] to close this guide window...\\033[0m\"\n"
-    << "read\n"
-    << "rm -- \"$0\"\n";
-    guideFile.close();
-
-    std::system("chmod +x forge_guide.sh");
-    std::system("(x-terminal-emulator -e ./forge_guide.sh || xfce4-terminal -e ./forge_guide.sh || gnome-terminal -- ./forge_guide.sh || konsole -e ./forge_guide.sh) 2>/dev/null &");
+std::string expandTilde(std::string path) {
+    if (!path.empty() && path[0] == '~') {
+        if (path.length() == 1 || path[1] == '/') {
+            const char* home = std::getenv("HOME");
+            if (home) {
+                path.replace(0, 1, std::string(home));
+            }
+        }
+    }
+    return path;
 }
 
-std::string askInput(const std::string& question, bool isRequired = true, bool strictFormat = false, bool ignoreGuideKey = false) {
+std::string escapeShellArg(const std::string& arg) {
+    std::string escaped = "'";
+    for (char c : arg) {
+        if (c == '\'') escaped += "'\\''";
+        else escaped += c;
+    }
+    escaped += "'";
+    return escaped;
+}
+
+void openGuide() {
+    clearScreen();
+    std::cout << "\033[1;36m========================================\033[0m\n";
+    std::cout << "\033[1;36m          PACKAGE FORGE GUIDE           \033[0m\n";
+    std::cout << "\033[1;36m========================================\033[0m\n\n";
+    std::cout << "\033[1;33m[?] Package Name:\033[0m myapp\n";
+    std::cout << "    -> (Only lowercase letters, no spaces)\n\n";
+    std::cout << "\033[1;33m[?] Version:\033[0m 1.0.0\n";
+    std::cout << "    -> (Version number of your app)\n\n";
+    std::cout << "\033[1;33m[?] Architecture:\033[0m amd64\n";
+    std::cout << "    -> (Usually 'amd64' for 64-bit Debian systems)\n\n";
+    std::cout << "\033[1;33m[?] Release:\033[0m 1\n";
+    std::cout << "    -> (RPM build release number, usually 1)\n\n";
+    std::cout << "\033[1;33m[?] Maintainer:\033[0m Developer <dev@example.com>\n";
+    std::cout << "    -> (Your name and email)\n\n";
+    std::cout << "\033[1;33m[?] Description:\033[0m A great terminal application\n";
+    std::cout << "    -> (Short info about your package, optional)\n\n";
+    std::cout << "\033[1;33m[?] Binary Path:\033[0m /home/user/Documents/myapp\n";
+    std::cout << "    -> (Full path to your compiled binary on YOUR system)\n\n";
+    std::cout << "\033[1;33m[?] Install Dir:\033[0m /usr/bin\n";
+    std::cout << "    -> (Where it should be installed on the USER's system)\n\n";
+    std::cout << "\033[1;33m[?] Output Directory:\033[0m /home/user/Desktop\n";
+    std::cout << "    -> (Where the final package should be saved)\n\n";
+    std::cout << "\033[1;35m--- SOFTWARE LICENSES ---\033[0m\n";
+    std::cout << "  1. MIT: Most popular, simplest. \"Do what you want\".\n";
+    std::cout << "  2. Apache 2.0: Corporate favorite. Protects patents.\n";
+    std::cout << "  3. GNU GPL v3.0: Copyleft: If you use it, yours must be open.\n";
+    std::cout << "  4. GNU GPL v2.0: Linux kernel license. Industry standard.\n";
+    std::cout << "  5. GNU LGPL v3.0: Ideal for libs, allows commercial linking.\n";
+    std::cout << "  6. GNU AGPL v3.0: Cloud/Web; requires network source sharing.\n";
+    std::cout << "  7. BSD 3-Clause: Like MIT but protects name/endorsement.\n";
+    std::cout << "  8. BSD 2-Clause: Simpler BSD version (FreeBSD choice).\n";
+    std::cout << "  9. Mozilla (MPL 2.0): File-based copyleft.\n";
+    std::cout << " 10. Eclipse (EPL 2.0): Used in enterprise Java projects.\n";
+    std::cout << " 11. ISC License: BSD/MIT hybrid, very short and clear.\n";
+    std::cout << " 12. The Unlicense: Declares code completely public domain.\n";
+    std::cout << " 13. Creative Commons BY: \"Give attribution\" license.\n";
+    std::cout << " 14. CC BY-SA: Share alike (Wikipedia style).\n";
+    std::cout << " 15. CC0 (Zero): No copyright claimed at all.\n\n";
+    std::cout << "\033[1;35m--- IT CERTIFICATIONS (Bonus) ---\033[0m\n";
+    std::cout << " 16. LPI Linux Essentials: Official entry ticket to Linux.\n";
+    std::cout << " 17. LPIC-1: Proof that you are a Linux Administrator.\n";
+    std::cout << " 18. CompTIA A+: The \"driver's license\" for IT basics.\n";
+    std::cout << " 19. CompTIA Network+: Starting point for networking.\n";
+    std::cout << " 20. CompTIA Security+: Respected entry to cybersecurity.\n";
+    std::cout << " 21. Cisco CCNA: Most recognized network certification.\n";
+    std::cout << " 22. AWS Solutions Architect: World leader in cloud.\n";
+    std::cout << " 23. Azure Administrator (AZ-104): Corporate cloud pref.\n";
+    std::cout << " 24. Google IT Support Certificate: Great for industry entry.\n";
+    std::cout << " 25. Red Hat Certified Admin (RHCSA): Hard & highly respected.\n";
+    std::cout << " 26. CISSP: Highest level professional security license.\n";
+    std::cout << " 27. CEH (Ethical Hacker): The \"white hat\" hacker license.\n";
+    std::cout << " 28. CKA (Kubernetes Admin): Popular modern DevOps cert.\n";
+    std::cout << " 29. PMP: Project management license (for large teams).\n";
+    std::cout << " 30. ITIL 4 Foundation: Standard for IT service processes.\n\n";
+    std::cout << "\033[1;32mPress [ENTER] to close this guide and continue...\033[0m\n";
+    std::string dummy;
+    std::getline(std::cin, dummy);
+}
+
+std::string askInput(const std::string& question, bool isRequired = true, bool strictFormat = false, bool ignoreGuideKey = false, bool checkExists = false) {
     std::string input;
     while (true) {
         std::cout << YELLOW << "[?] " << RESET << BOLD << question << ": " << RESET;
         std::getline(std::cin, input);
+
+        if (input == "p" || input == "P") {
+            throw AbortOperation();
+        }
 
         if (input == "0" && !ignoreGuideKey) {
             openGuide();
@@ -148,8 +171,15 @@ std::string askInput(const std::string& question, bool isRequired = true, bool s
             }
         }
 
+        input = expandTilde(input);
+
         if (strictFormat && !isValidStrictFormat(input)) {
             printError("Invalid format! Only lowercase letters, numbers, dashes (-), dots (.) and underscores (_) are allowed. No spaces!");
+            continue;
+        }
+
+        if (checkExists && !fs::exists(input)) {
+            printError("File or directory not found! Please check the path and try again: " + input);
             continue;
         }
 
@@ -283,19 +313,30 @@ void buildDebian() {
         }
     }
 
-    std::string binaryPath = askInput("Binary Path");
+    std::string binaryPath = askInput("Binary Path", true, false, false, true);
     std::string installDir = askInput("Install Dir");
     std::string outputDir = askInput("Output Directory");
 
-    fs::create_directories(outputDir);
+    std::string relativeInstallDir = installDir;
+    if (!relativeInstallDir.empty() && relativeInstallDir[0] == '/') relativeInstallDir.erase(0, 1);
+
+    try {
+        fs::create_directories(outputDir);
+    } catch (const fs::filesystem_error& e) {
+        printError("Failed to create output directory! Permission denied or invalid path: " + outputDir);
+        return;
+    }
+
     std::string buildDir = outputDir + "/" + pkgName + "_" + version + "_" + arch;
 
     printStep("Creating directory hierarchy in " + outputDir);
-    fs::create_directories(buildDir + "/DEBIAN");
-
-    std::string relativeInstallDir = installDir;
-    if (relativeInstallDir[0] == '/') relativeInstallDir.erase(0, 1);
-    fs::create_directories(buildDir + "/" + relativeInstallDir);
+    try {
+        fs::create_directories(buildDir + "/DEBIAN");
+        fs::create_directories(buildDir + "/" + relativeInstallDir);
+    } catch (const fs::filesystem_error& e) {
+        printError("Failed to create build hierarchy! Check permissions.");
+        return;
+    }
 
     printStep("Writing control file");
     std::ofstream controlFile(buildDir + "/DEBIAN/control");
@@ -306,11 +347,19 @@ void buildDebian() {
     if (!description.empty()) {
         controlFile << "Description: " << description << "\n";
     }
+    controlFile << "\n";
     controlFile.close();
 
     printStep("Generating copyright/license file");
     std::string docDir = buildDir + "/usr/share/doc/" + pkgName;
-    fs::create_directories(docDir);
+
+    try {
+        fs::create_directories(docDir);
+    } catch (const fs::filesystem_error& e) {
+        printError("Failed to create doc directory.");
+        return;
+    }
+
     std::ofstream copyrightFile(docDir + "/copyright");
     copyrightFile << "Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/\n";
     copyrightFile << "Upstream-Name: " << pkgName << "\n\n";
@@ -333,7 +382,7 @@ void buildDebian() {
     }
 
     printStep("Running dpkg-deb");
-    std::string buildCmd = "dpkg-deb --build " + buildDir;
+    std::string buildCmd = "dpkg-deb --build " + escapeShellArg(buildDir);
     int result = std::system(buildCmd.c_str());
 
     if (result == 0) {
@@ -346,6 +395,8 @@ void buildDebian() {
         promptMovePackage(finalDebPath);
     } else {
         printError("dpkg-deb failed during package creation.");
+        printStep("Cleaning up broken temporary files");
+        fs::remove_all(buildDir);
     }
 }
 
@@ -370,19 +421,30 @@ void buildRPM() {
         }
     }
 
-    std::string binaryPath = askInput("Binary Path");
+    std::string binaryPath = askInput("Binary Path", true, false, false, true);
     std::string installDir = askInput("Install Dir");
     std::string outputDir = askInput("Output Directory");
 
-    fs::create_directories(outputDir);
+    try {
+        fs::create_directories(outputDir);
+    } catch (const fs::filesystem_error& e) {
+        printError("Failed to create output directory! Permission denied or invalid path: " + outputDir);
+        return;
+    }
+
     std::string workspace = outputDir + "/" + pkgName + "_rpm_workspace";
 
     printStep("Preparing RPM workspace in " + outputDir);
-    fs::create_directories(workspace + "/BUILD");
-    fs::create_directories(workspace + "/RPMS");
-    fs::create_directories(workspace + "/SOURCES");
-    fs::create_directories(workspace + "/SPECS");
-    fs::create_directories(workspace + "/SRPMS");
+    try {
+        fs::create_directories(workspace + "/BUILD");
+        fs::create_directories(workspace + "/RPMS");
+        fs::create_directories(workspace + "/SOURCES");
+        fs::create_directories(workspace + "/SPECS");
+        fs::create_directories(workspace + "/SRPMS");
+    } catch (const fs::filesystem_error& e) {
+        printError("Failed to create RPM workspace hierarchy! Check permissions.");
+        return;
+    }
 
     printStep("Copying source binary to SOURCES");
     try {
@@ -427,12 +489,14 @@ void buildRPM() {
     specFile << "install -m 755 %{name} %{buildroot}" << installDir << "/" << pkgName << "\n\n";
 
     specFile << "%files\n";
-    specFile << installDir << "/" << pkgName << "\n";
+    specFile << installDir << "/" << pkgName << "\n\n";
     specFile.close();
 
     printStep("Running rpmbuild");
     std::string currentPath = fs::absolute(workspace).string();
-    std::string buildCmd = "rpmbuild --define '_topdir " + currentPath + "' -bb " + specPath;
+
+    std::string defineArg = "_topdir " + currentPath;
+    std::string buildCmd = "rpmbuild --define " + escapeShellArg(defineArg) + " -bb " + escapeShellArg(specPath);
 
     int result = std::system(buildCmd.c_str());
 
@@ -465,6 +529,37 @@ void buildRPM() {
         }
     } else {
         printError("rpmbuild failed. Ensure 'rpm-build' is installed.");
+        printStep("Cleaning up broken temporary workspace");
+        fs::remove_all(workspace);
+    }
+}
+
+void installTools() {
+    std::cout << "\n" << BOLD << CYAN << "--- INSTALLING REQUIRED TOOLS ---" << RESET << "\n";
+    bool hasApt = (std::system("command -v apt > /dev/null 2>&1") == 0);
+    bool hasDnf = (std::system("command -v dnf > /dev/null 2>&1") == 0);
+    bool hasPacman = (std::system("command -v pacman > /dev/null 2>&1") == 0);
+
+    int result = -1;
+
+    if (hasApt) {
+        printStep("Debian/Ubuntu detected");
+        result = std::system("sudo apt update && sudo apt install -y dpkg rpm");
+    } else if (hasDnf) {
+        printStep("Fedora/RHEL detected");
+        result = std::system("sudo dnf install -y rpm-build dpkg");
+    } else if (hasPacman) {
+        printStep("Arch Linux detected");
+        result = std::system("sudo pacman -Sy --noconfirm rpm-tools dpkg");
+    } else {
+        printError("No supported package manager found (apt, dnf, or pacman).");
+        return;
+    }
+
+    if (result == 0) {
+        printSuccess("All required tools (dpkg-deb, rpmbuild) installed successfully!");
+    } else {
+        printError("Some packages may have failed to install. Check the output above.");
     }
 }
 
@@ -476,28 +571,41 @@ void printOutro() {
 }
 
 int main() {
-    printBanner();
-
-    std::cout << BOLD << "Which armor (package) do you want to forge, knight?\n" << RESET;
-    std::cout << "  [" << GREEN << "1" << RESET << "] Debian / Ubuntu  (" << GREEN << ".deb" << RESET << ")\n";
-    std::cout << "  [" << YELLOW << "2" << RESET << "] Fedora / RedHat (" << YELLOW << ".rpm" << RESET << ")\n";
-    std::cout << "  [" << CYAN << "0" << RESET << "] Open Example Guide (New Terminal)\n";
-    std::cout << "  [" << RED << "q" << RESET << "] Exit\n\n";
-
-    std::string choice;
     while(true) {
-        choice = askInput("Choice");
-        if (choice == "1") {
-            buildDebian();
-            break;
-        } else if (choice == "2") {
-            buildRPM();
-            break;
-        } else if (choice == "q" || choice == "Q") {
-            std::cout << "\nClosing the forge. See you later!\n";
-            break;
-        } else {
-            printError("Invalid choice! Please enter 1, 2, or q.");
+        try {
+            printBanner();
+
+            std::cout << BOLD << "Which armor (package) do you want to forge, knight?\n" << RESET;
+            std::cout << "  [" << GREEN << "1" << RESET << "] Debian / Ubuntu  (" << GREEN << ".deb" << RESET << ")\n";
+            std::cout << "  [" << YELLOW << "2" << RESET << "] Fedora / RedHat (" << YELLOW << ".rpm" << RESET << ")\n";
+            std::cout << "  [" << BLUE << "3" << RESET << "] Install Required Tools\n";
+            std::cout << "  [" << CYAN << "0" << RESET << "] Open Example Guide\n";
+            std::cout << "  [" << RED << "q" << RESET << "] Exit\n\n";
+
+            std::string choice = askInput("Choice", true, false, true);
+
+            if (choice == "1") {
+                buildDebian();
+                waitForEnter();
+            } else if (choice == "2") {
+                buildRPM();
+                waitForEnter();
+            } else if (choice == "3") {
+                installTools();
+                waitForEnter();
+            } else if (choice == "0") {
+                openGuide();
+            } else if (choice == "q" || choice == "Q") {
+                std::cout << "\nClosing the forge. See you later!\n";
+                break;
+            } else {
+                printError("Invalid choice! Please enter 0, 1, 2, 3, or q.");
+                sleepMs(1000);
+            }
+
+        } catch (const AbortOperation&) {
+            std::cout << "\n" << RED << BOLD << "[!] Operation Cancelled. Returning to the main menu..." << RESET << "\n";
+            sleepMs(1200);
         }
     }
 

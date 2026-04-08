@@ -43,25 +43,25 @@ SHA256: 3c913f1bad15c6bfb32baa6acdae5927a2932d87a568d7e5a9132b65fc1e02e1
 Description: C+++ Packaging Wizard
 
 Package: pacforge
-Version: 0.1.0
+Version: 0.2.4
 Architecture: amd64
-Maintainer: neuwj <neuwj@bk.ru>
-Filename: pool/main/pacforge_0.1.0_amd64.deb
-Size: 24184
-MD5sum: 5e918d55bdb7badef9b953f2cfc176f1
-SHA1: b47b6b14c3e207f73fda79d72be856dac1b431dc
-SHA256: 44d2670d0f41fdeca9e0f1ab4c103156ad6da2752c84f8f9915e02dd9cd67f1e
-Description: C++ Packaging Wizard [Certified by: LPIC-1]
+Maintainer: neuwj<neuwj@bk.ru>
+Filename: pool/main/pacforge_0.2.4_amd64.deb
+Size: 26980
+MD5sum: eb80662a479b7933a8d7b91e8ced3b22
+SHA1: 69792da919d058155c96dd6c710562db164ec7a1
+SHA256: 4053d944fa1d81b73e04de5143efb2f8aed21f650ce214f4bece7589b7d8093b
+Description: Packaging wizard
 
 Package: repoforge
-Version: 0.1.1
+Version: 0.1.6
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: pool/main/repoforge_0.1.1_amd64.deb
-Size: 32308
-MD5sum: 2eb2ddd263572d6e3a56958aea9e0b2a
-SHA1: b0aca776c495ae6263505faebe441b53f11e8c68
-SHA256: 3a7793ed9583e110b5cd162871fb88f3bf5ea257d270ddcd8d3bc5c8402a1db3
+Filename: pool/main/repoforge_0.1.6_amd64.deb
+Size: 57260
+MD5sum: 8402f2f1de6c93f6ba748a474b687170
+SHA1: 180113ca32a694eb786cfcce13698d74ffbaa19e
+SHA256: a288ac163256ff6ed73cbc807e4d52b1ca4e0d4946281f89705eee47f658b7b4
 Description: Automated Repository Indexer
 
 Package: uninstall
@@ -76,13 +76,13 @@ SHA256: c49f5f9c374eac72bbd9f39a4e77221cac4c187921d2eff536af15a47faef10d
 Description: Easy uninstaller
 
 Package: warpcpp
-Version: 0.0.4
+Version: 1.1.2
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: pool/main/warpcpp_0.0.4_amd64.deb
-Size: 14856
-MD5sum: 79253bd6cf4c154ec4d3b8fb35885925
-SHA1: be89b0cb8e3f8f21031f763ec00c75417175af35
-SHA256: c62484890f1ca3d7fa3b10672700e1bfe9d5966b994a2d452bb91c407ff1bc72
-Description: C++ Packaging Wizard [Certified by: LPIC-1]
+Filename: pool/main/warpcpp_1.1.2_amd64.deb
+Size: 38712
+MD5sum: c65b0c382598c679318fb07e9dfeb2da
+SHA1: a847e8fd62debcd0e2c661b58305fa3755f1e3be
+SHA256: 00f01586335f6d907db301740be67d928e8749a461ab1f7a9d773664c83e179c
+Description: warp-cli C++ app
 
