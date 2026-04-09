@@ -28,17 +28,16 @@ struct PcloseDeleter {
     }
 };
 
-int get_left_padding() {
+// Returns current terminal width
+int get_terminal_width() {
     struct winsize w;
-    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1) return 4;
-    int width = w.ws_col;
-    int max_content_width = 55;
-    int padding = (width - max_content_width) / 2;
-    return padding > 0 ? padding : 2;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1) return 80;
+    return w.ws_col;
 }
 
-std::string get_indent() {
-    return std::string(get_left_padding(), ' ');
+// Creates a dynamic separator line based on current terminal width
+std::string get_separator() {
+    return std::string(get_terminal_width(), '-');
 }
 
 void clear_screen() {
@@ -47,19 +46,19 @@ void clear_screen() {
 }
 
 void pause_screen() {
-    std::string indent = get_indent();
-    std::cout << "\n" << indent << CF_YELLOW << "Press Enter to continue..." << RESET;
+    std::cout << "\n  " << CF_YELLOW << "Press Enter to continue..." << RESET;
     std::string dummy;
     std::getline(std::cin, dummy);
 }
 
-void print_indented_output(const std::string& output) {
-    std::string indent = get_indent();
+// Formats shell outputs with a simple 2-space left margin
+void print_output(const std::string& output) {
     std::istringstream stream(output);
     std::string line;
+
     while (std::getline(stream, line)) {
         if (!line.empty()) {
-            std::cout << indent << line << "\n";
+            std::cout << "  " << line << "\n";
         }
     }
 }
@@ -97,8 +96,7 @@ bool check_warp_installed() {
 }
 
 void install_warp() {
-    std::string indent = get_indent();
-    std::cout << "\n" << indent << BOLD << CYAN << "--- INSTALLING CLOUDFLARE WARP ---" << RESET << "\n";
+    std::cout << "\n  " << BOLD << CYAN << "--- INSTALLING CLOUDFLARE WARP ---" << RESET << "\n";
 
     bool has_apt = (std::system("command -v apt-get > /dev/null 2>&1") == 0);
     bool has_yum = (std::system("command -v yum > /dev/null 2>&1") == 0);
@@ -107,7 +105,7 @@ void install_warp() {
     int result = -1;
 
     if (has_apt) {
-        std::cout << indent << "Debian/Ubuntu/Derivatives detected.\n";
+        std::cout << "  Debian/Ubuntu/Derivatives detected.\n";
         std::string apt_script =
         "curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && "
         "CODENAME=$(. /etc/os-release && echo \"${UBUNTU_CODENAME:-$VERSION_CODENAME}\"); "
@@ -119,29 +117,28 @@ void install_warp() {
         "sudo apt-get update && sudo apt-get install cloudflare-warp -y";
         result = std::system(apt_script.c_str());
     } else if (has_yum) {
-        std::cout << indent << "Red Hat/CentOS/Fedora detected.\n";
+        std::cout << "  Red Hat/CentOS/Fedora detected.\n";
         result = std::system("sudo rpm -e 'gpg-pubkey(4fa1c3ba-61abda35)' ; sudo rpm --import https://pkg.cloudflareclient.com/pubkey.gpg && "
         "curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | sudo tee /etc/yum.repos.d/cloudflare-warp.repo && "
         "sudo yum update -y && sudo yum install cloudflare-warp -y");
     } else if (has_pacman) {
-        std::cout << indent << "Arch Linux detected.\n";
+        std::cout << "  Arch Linux detected.\n";
         result = std::system("yay -S cloudflare-warp-bin --noconfirm");
     } else {
-        std::cout << indent << RED << "No supported package manager found." << RESET << "\n";
+        std::cout << "  " << RED << "No supported package manager found." << RESET << "\n";
         pause_screen();
         return;
     }
 
     if (result == 0) {
-        std::cout << indent << GREEN << "Installation completed successfully!" << RESET << "\n";
+        std::cout << "  " << GREEN << "Installation completed successfully!" << RESET << "\n";
     } else {
-        std::cout << indent << RED << "Installation failed or was interrupted." << RESET << "\n";
+        std::cout << "  " << RED << "Installation failed or was interrupted." << RESET << "\n";
     }
     pause_screen();
 }
 
 bool check_and_start_service() {
-    std::string indent = get_indent();
     int status = -1;
 
     if (std::system("command -v systemctl > /dev/null 2>&1") == 0) {
@@ -152,14 +149,14 @@ bool check_and_start_service() {
 
     if (status != 0) {
         clear_screen();
-        std::cout << "\n" << indent << RED << BOLD << "WARP Service is currently NOT running!" << RESET << "\n";
-        std::cout << indent << "The background daemon 'warp-svc' must be active.\n";
-        std::cout << indent << "Would you like to start it now? (Y/n): ";
+        std::cout << "\n  " << RED << BOLD << "WARP Service is currently NOT running!" << RESET << "\n";
+        std::cout << "  The background daemon 'warp-svc' must be active.\n";
+        std::cout << "  Would you like to start it now? (Y/n): ";
         std::string ans;
         std::getline(std::cin, ans);
 
         if (ans.empty() || ans == "Y" || ans == "y") {
-            std::cout << indent << CF_ORANGE << "Starting service..." << RESET << "\n";
+            std::cout << "  " << CF_ORANGE << "Starting service..." << RESET << "\n";
             int start_status;
             if (std::system("command -v systemctl > /dev/null 2>&1") == 0) {
                 start_status = std::system("sudo systemctl start warp-svc");
@@ -168,11 +165,11 @@ bool check_and_start_service() {
             }
 
             if (start_status == 0) {
-                std::cout << indent << GREEN << "Service started successfully!" << RESET << "\n";
+                std::cout << "  " << GREEN << "Service started successfully!" << RESET << "\n";
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 return true;
             } else {
-                std::cout << indent << RED << "Failed to start service. Please check your privileges." << RESET << "\n";
+                std::cout << "  " << RED << "Failed to start service. Please check your privileges." << RESET << "\n";
                 pause_screen();
                 return false;
             }
@@ -189,27 +186,26 @@ void get_status_info(std::string& status_text, std::string& status_color) {
 
     if (lower_output.find("connected") != std::string::npos && lower_output.find("disconnected") == std::string::npos) {
         status_text = "CONNECTED";
-        status_color = GREEN;
+        status_color = std::string(GREEN);
     } else if (lower_output.find("disconnected") != std::string::npos) {
         status_text = "DISCONNECTED";
-        status_color = CF_YELLOW;
+        status_color = std::string(CF_YELLOW);
     } else if (lower_output.find("connecting") != std::string::npos) {
         status_text = "CONNECTING...";
-        status_color = CYAN;
+        status_color = std::string(CYAN);
     } else {
         status_text = "OFFLINE / ERROR";
-        status_color = RED;
+        status_color = std::string(RED);
     }
 }
 
 void print_header() {
-    std::string indent = get_indent();
     std::cout << "\n";
-    std::cout << indent << BOLD << CF_ORANGE << "☁️  CLOUD"
+    std::cout << "  " << BOLD << CF_ORANGE << "☁️  CLOUD"
     << CF_YELLOW << "FLARE "
     << CF_BRIGHT << "WARP+ " << RESET << "v1.1.2\n";
-    std::cout << indent << CF_YELLOW << "made by Neuwj - neuwj@bk.ru\n" << RESET;
-    std::cout << indent << CF_ORANGE << "------------------------------------------------------\n" << RESET;
+    std::cout << "  " << CF_YELLOW << "made by Neuwj - neuwj@bk.ru\n" << RESET;
+    std::cout << CF_ORANGE << get_separator() << "\n" << RESET;
 }
 
 void dns_filters_menu() {
@@ -217,25 +213,24 @@ void dns_filters_menu() {
     while (true) {
         clear_screen();
         print_header();
-        std::string indent = get_indent();
 
-        std::cout << indent << BOLD << "🛡️  DNS Families & Filters" << RESET << "\n\n";
-        std::cout << indent << CF_BRIGHT << "[1]" << RESET << " Off (No Filtering)\n";
-        std::cout << indent << CF_BRIGHT << "[2]" << RESET << " Malware Only\n";
-        std::cout << indent << CF_BRIGHT << "[3]" << RESET << " Full (Malware + Adult Content)\n";
-        std::cout << indent << CF_BRIGHT << "[4]" << RESET << " Back to Main Menu\n";
-        std::cout << "\n" << indent << "Select (1-4): ";
+        std::cout << "  " << BOLD << "🛡️  DNS Families & Filters" << RESET << "\n\n";
+        std::cout << "  " << CF_BRIGHT << "[1]" << RESET << " Off (No Filtering)\n";
+        std::cout << "  " << CF_BRIGHT << "[2]" << RESET << " Malware Only\n";
+        std::cout << "  " << CF_BRIGHT << "[3]" << RESET << " Full (Malware + Adult Content)\n";
+        std::cout << "  " << CF_BRIGHT << "[4]" << RESET << " Back to Main Menu\n";
+        std::cout << "\n  Select (1-4): ";
 
         if (!std::getline(std::cin, choice)) break;
         if (choice == "4") break;
 
         std::cout << "\n";
         if (choice == "1") {
-            print_indented_output(run_shell("dns families off"));
+            print_output(run_shell("dns families off"));
         } else if (choice == "2") {
-            print_indented_output(run_shell("dns families malware"));
+            print_output(run_shell("dns families malware"));
         } else if (choice == "3") {
-            print_indented_output(run_shell("dns families full"));
+            print_output(run_shell("dns families full"));
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1500));
     }
@@ -246,45 +241,44 @@ void advanced_menu() {
     while (true) {
         clear_screen();
         print_header();
-        std::string indent = get_indent();
 
-        std::cout << indent << BOLD << "🔧  Advanced & Diagnostics" << RESET << "\n\n";
-        std::cout << indent << CF_BRIGHT << "[1]" << RESET << " Show Registration / Account Info\n";
-        std::cout << indent << CF_BRIGHT << "[2]" << RESET << " Show Current Settings\n";
-        std::cout << indent << CF_BRIGHT << "[3]" << RESET << " Exclude IP or Domain\n";
-        std::cout << indent << CF_BRIGHT << "[4]" << RESET << " Show Excluded List\n";
-        std::cout << indent << CF_BRIGHT << "[5]" << RESET << " Run Diagnostics (warp-diag)\n";
-        std::cout << indent << CF_BRIGHT << "[6]" << RESET << " Back to Main Menu\n";
-        std::cout << "\n" << indent << "Select (1-6): ";
+        std::cout << "  " << BOLD << "🔧  Advanced & Diagnostics" << RESET << "\n\n";
+        std::cout << "  " << CF_BRIGHT << "[1]" << RESET << " Show Registration / Account Info\n";
+        std::cout << "  " << CF_BRIGHT << "[2]" << RESET << " Show Current Settings\n";
+        std::cout << "  " << CF_BRIGHT << "[3]" << RESET << " Exclude IP or Domain\n";
+        std::cout << "  " << CF_BRIGHT << "[4]" << RESET << " Show Excluded List\n";
+        std::cout << "  " << CF_BRIGHT << "[5]" << RESET << " Run Diagnostics (warp-diag)\n";
+        std::cout << "  " << CF_BRIGHT << "[6]" << RESET << " Back to Main Menu\n";
+        std::cout << "\n  Select (1-6): ";
 
         if (!std::getline(std::cin, choice)) break;
         if (choice == "6") break;
 
         std::cout << "\n";
         if (choice == "1") {
-            print_indented_output(run_shell("registration show"));
+            print_output(run_shell("registration show"));
             pause_screen();
         } else if (choice == "2") {
-            print_indented_output(run_shell("settings"));
+            print_output(run_shell("settings"));
             pause_screen();
         } else if (choice == "3") {
             std::string target;
-            std::cout << indent << BOLD << "Enter IP or Domain to exclude: " << RESET;
+            std::cout << "  " << BOLD << "Enter IP or Domain to exclude: " << RESET;
             std::getline(std::cin, target);
 
             if (!target.empty()) {
                 if (is_safe_input(target)) {
-                    print_indented_output(run_shell("exclude add " + target));
+                    print_output(run_shell("exclude add " + target));
                 } else {
-                    std::cout << indent << RED << "ERROR: Invalid or dangerous characters detected!" << RESET << "\n";
+                    std::cout << "  " << RED << "ERROR: Invalid or dangerous characters detected!" << RESET << "\n";
                 }
                 std::this_thread::sleep_for(std::chrono::seconds(2));
             }
         } else if (choice == "4") {
-            print_indented_output(run_shell("exclude list"));
+            print_output(run_shell("exclude list"));
             pause_screen();
         } else if (choice == "5") {
-            std::cout << indent << BOLD << CF_ORANGE << ">> Running diagnostics tool... This might take a while." << RESET << "\n";
+            std::cout << "  " << BOLD << CF_ORANGE << ">> Running diagnostics tool... This might take a while." << RESET << "\n";
             std::system("warp-diag");
             pause_screen();
         }
@@ -296,83 +290,82 @@ void settings_menu() {
     while (true) {
         clear_screen();
         print_header();
-        std::string indent = get_indent();
 
-        std::cout << indent << BOLD << "⚙️  Setup & Settings" << RESET << "\n\n";
-        std::cout << indent << CF_BRIGHT << "[1]" << RESET << " Register New Device (First Time Setup)\n";
-        std::cout << indent << CF_BRIGHT << "[2]" << RESET << " Enter License Key\n";
-        std::cout << indent << CF_BRIGHT << "[3]" << RESET << " Teams / Zero Trust Enroll\n";
-        std::cout << indent << CF_BRIGHT << "[4]" << RESET << " Change Mode\n";
-        std::cout << indent << CF_BRIGHT << "[5]" << RESET << " Change Protocol (WireGuard / MASQUE)\n";
-        std::cout << indent << CF_BRIGHT << "[6]" << RESET << " Back to Main Menu\n";
-        std::cout << "\n" << indent << "Select (1-6): ";
+        std::cout << "  " << BOLD << "⚙️  Setup & Settings" << RESET << "\n\n";
+        std::cout << "  " << CF_BRIGHT << "[1]" << RESET << " Register New Device (First Time Setup)\n";
+        std::cout << "  " << CF_BRIGHT << "[2]" << RESET << " Enter License Key\n";
+        std::cout << "  " << CF_BRIGHT << "[3]" << RESET << " Teams / Zero Trust Enroll\n";
+        std::cout << "  " << CF_BRIGHT << "[4]" << RESET << " Change Mode\n";
+        std::cout << "  " << CF_BRIGHT << "[5]" << RESET << " Change Protocol (WireGuard / MASQUE)\n";
+        std::cout << "  " << CF_BRIGHT << "[6]" << RESET << " Back to Main Menu\n";
+        std::cout << "\n  Select (1-6): ";
 
         if (!std::getline(std::cin, choice)) break;
         if (choice == "6") break;
 
         std::cout << "\n";
         if (choice == "1") {
-            std::cout << indent << BOLD << CF_ORANGE << ">> Registering device... (Accepting TOS)" << RESET << "\n";
-            print_indented_output(run_shell("registration new --accept-tos"));
+            std::cout << "  " << BOLD << CF_ORANGE << ">> Registering device... (Accepting TOS)" << RESET << "\n";
+            print_output(run_shell("registration new --accept-tos"));
             std::this_thread::sleep_for(std::chrono::seconds(2));
         }
         else if (choice == "2") {
             std::string key;
-            std::cout << indent << BOLD << "License Key: " << RESET;
+            std::cout << "  " << BOLD << "License Key: " << RESET;
             std::getline(std::cin, key);
 
             if (!key.empty() && is_safe_input(key)) {
-                std::cout << "\n" << indent << BOLD << CF_ORANGE << ">> Applying License Key..." << RESET << "\n";
-                print_indented_output(run_shell("registration license " + key));
+                std::cout << "\n  " << BOLD << CF_ORANGE << ">> Applying License Key..." << RESET << "\n";
+                print_output(run_shell("registration license " + key));
             } else {
-                std::cout << "\n" << indent << RED << ">> Invalid or empty input. Cancelled." << RESET << "\n";
+                std::cout << "\n  " << RED << ">> Invalid or empty input. Cancelled." << RESET << "\n";
             }
             std::this_thread::sleep_for(std::chrono::seconds(2));
         }
         else if (choice == "3") {
             std::string org;
-            std::cout << indent << BOLD << "Organization Name: " << RESET;
+            std::cout << "  " << BOLD << "Organization Name: " << RESET;
             std::getline(std::cin, org);
 
             if (!org.empty() && is_safe_input(org)) {
-                std::cout << "\n" << indent << BOLD << CF_ORANGE << ">> Enrolling to Teams..." << RESET << "\n";
-                print_indented_output(run_shell("teams-enroll " + org));
+                std::cout << "\n  " << BOLD << CF_ORANGE << ">> Enrolling to Teams..." << RESET << "\n";
+                print_output(run_shell("teams-enroll " + org));
             } else {
-                std::cout << "\n" << indent << RED << ">> Invalid or empty input. Cancelled." << RESET << "\n";
+                std::cout << "\n  " << RED << ">> Invalid or empty input. Cancelled." << RESET << "\n";
             }
             std::this_thread::sleep_for(std::chrono::seconds(2));
         }
         else if (choice == "4") {
-            std::cout << indent << BOLD << "Select Mode:" << RESET << "\n";
-            std::cout << indent << CF_BRIGHT << "[1]" << RESET << " Standard Warp+\n";
-            std::cout << indent << CF_BRIGHT << "[2]" << RESET << " DNS Only (1.1.1.1)\n";
-            std::cout << indent << CF_BRIGHT << "[3]" << RESET << " Warp+ & DNS\n";
-            std::cout << indent << CF_BRIGHT << "[4]" << RESET << " Proxy (Local SOCKS5)\n";
-            std::cout << indent << "Choice: ";
+            std::cout << "  " << BOLD << "Select Mode:" << RESET << "\n";
+            std::cout << "  " << CF_BRIGHT << "[1]" << RESET << " Standard Warp+\n";
+            std::cout << "  " << CF_BRIGHT << "[2]" << RESET << " DNS Only (1.1.1.1)\n";
+            std::cout << "  " << CF_BRIGHT << "[3]" << RESET << " Warp+ & DNS\n";
+            std::cout << "  " << CF_BRIGHT << "[4]" << RESET << " Proxy (Local SOCKS5)\n";
+            std::cout << "  Choice: ";
 
             std::string mode_choice;
             std::getline(std::cin, mode_choice);
 
             std::cout << "\n";
-            if (mode_choice == "1") print_indented_output(run_shell("mode warp"));
-            else if (mode_choice == "2") print_indented_output(run_shell("mode doh"));
-            else if (mode_choice == "3") print_indented_output(run_shell("mode warp+doh"));
-            else if (mode_choice == "4") print_indented_output(run_shell("mode proxy"));
+            if (mode_choice == "1") print_output(run_shell("mode warp"));
+            else if (mode_choice == "2") print_output(run_shell("mode doh"));
+            else if (mode_choice == "3") print_output(run_shell("mode warp+doh"));
+            else if (mode_choice == "4") print_output(run_shell("mode proxy"));
 
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
         }
         else if (choice == "5") {
-            std::cout << indent << BOLD << "Select Protocol:" << RESET << "\n";
-            std::cout << indent << CF_BRIGHT << "[1]" << RESET << " WireGuard\n";
-            std::cout << indent << CF_BRIGHT << "[2]" << RESET << " MASQUE (Recommended)\n";
-            std::cout << indent << "Choice: ";
+            std::cout << "  " << BOLD << "Select Protocol:" << RESET << "\n";
+            std::cout << "  " << CF_BRIGHT << "[1]" << RESET << " WireGuard\n";
+            std::cout << "  " << CF_BRIGHT << "[2]" << RESET << " MASQUE (Recommended)\n";
+            std::cout << "  Choice: ";
 
             std::string proto_choice;
             std::getline(std::cin, proto_choice);
 
             std::cout << "\n";
-            if (proto_choice == "1") print_indented_output(run_shell("tunnel protocol set WireGuard"));
-            else if (proto_choice == "2") print_indented_output(run_shell("tunnel protocol set MASQUE"));
+            if (proto_choice == "1") print_output(run_shell("tunnel protocol set WireGuard"));
+            else if (proto_choice == "2") print_output(run_shell("tunnel protocol set MASQUE"));
 
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
         }
@@ -383,9 +376,8 @@ int main() {
     if (!check_warp_installed()) {
         clear_screen();
         print_header();
-        std::string indent = get_indent();
-        std::cout << "\n" << indent << RED << BOLD << "Critical Error: 'warp-cli' not found on system!" << RESET << "\n";
-        std::cout << indent << "Would you like to install Cloudflare WARP now? (Y/n): ";
+        std::cout << "\n  " << RED << BOLD << "Critical Error: 'warp-cli' not found on system!" << RESET << "\n";
+        std::cout << "  Would you like to install Cloudflare WARP now? (Y/n): ";
         std::string ans;
         std::getline(std::cin, ans);
         if (ans.empty() || ans == "Y" || ans == "y") {
@@ -399,8 +391,7 @@ int main() {
     }
 
     if (!check_and_start_service()) {
-        std::string indent = get_indent();
-        std::cout << indent << RED << "Warning: WARP service is not running. Commands will likely fail!" << RESET << "\n";
+        std::cout << "  " << RED << "Warning: WARP service is not running. Commands will likely fail!" << RESET << "\n";
         pause_screen();
     }
 
@@ -412,32 +403,31 @@ int main() {
 
         clear_screen();
         print_header();
-        std::string indent = get_indent();
 
-        std::cout << indent << BOLD << "Network Info:" << RESET << "\n";
-        std::cout << indent << "Current Status: [" << status_color << status_text << RESET << "]\n\n";
+        std::cout << "  " << BOLD << "Network Info:" << RESET << "\n";
+        std::cout << "  Current Status: [" << status_color << status_text << RESET << "]\n\n";
 
-        std::cout << indent << "What would you like to do?\n\n";
-        std::cout << indent << CF_BRIGHT << "[1]" << RESET << " Connect\n";
-        std::cout << indent << CF_BRIGHT << "[2]" << RESET << " Disconnect\n";
-        std::cout << indent << CF_BRIGHT << "[3]" << RESET << " Setup & Settings\n";
-        std::cout << indent << CF_BRIGHT << "[4]" << RESET << " DNS Families & Filters\n";
-        std::cout << indent << CF_BRIGHT << "[5]" << RESET << " Advanced & Diagnostics\n";
-        std::cout << indent << CF_BRIGHT << "[6]" << RESET << " Refresh Status\n";
-        std::cout << indent << CF_BRIGHT << "[7]" << RESET << " Exit\n";
-        std::cout << "\n" << indent << "Select (1-7): ";
+        std::cout << "  What would you like to do?\n\n";
+        std::cout << "  " << CF_BRIGHT << "[1]" << RESET << " Connect\n";
+        std::cout << "  " << CF_BRIGHT << "[2]" << RESET << " Disconnect\n";
+        std::cout << "  " << CF_BRIGHT << "[3]" << RESET << " Setup & Settings\n";
+        std::cout << "  " << CF_BRIGHT << "[4]" << RESET << " DNS Families & Filters\n";
+        std::cout << "  " << CF_BRIGHT << "[5]" << RESET << " Advanced & Diagnostics\n";
+        std::cout << "  " << CF_BRIGHT << "[6]" << RESET << " Refresh Status\n";
+        std::cout << "  " << CF_BRIGHT << "[7]" << RESET << " Exit\n";
+        std::cout << "\n  Select (1-7): ";
 
         if (!std::getline(std::cin, choice)) break;
 
         if (choice == "7") {
-            std::cout << "\n" << indent << BOLD << CF_ORANGE << "Stay safe, Neuwj! 👋\n" << RESET;
-            std::cout << indent << CF_YELLOW << "made by Neuwj - neuwj@bk.ru\n" << RESET;
+            std::cout << "\n  " << BOLD << CF_ORANGE << "Stay safe, Neuwj! 👋\n" << RESET;
+            std::cout << "  " << CF_YELLOW << "made by Neuwj - neuwj@bk.ru\n" << RESET;
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
             clear_screen();
             break;
         }
         else if (choice == "1") {
-            std::cout << "\n" << indent << BOLD << CF_ORANGE << ">> Initiating Connection... " << RESET;
+            std::cout << "\n  " << BOLD << CF_ORANGE << ">> Initiating Connection... " << RESET;
             std::cout.flush();
 
             auto future = std::async(std::launch::async, []() { return run_shell("connect"); });
@@ -449,12 +439,12 @@ int main() {
             }
 
             std::cout << "\b" << GREEN << "Done!" << RESET << "\n";
-            print_indented_output(future.get());
+            print_output(future.get());
             std::this_thread::sleep_for(std::chrono::seconds(2));
         }
         else if (choice == "2") {
-            std::cout << "\n" << indent << BOLD << CF_YELLOW << ">> Breaking Connection..." << RESET << "\n";
-            print_indented_output(run_shell("disconnect"));
+            std::cout << "\n  " << BOLD << CF_YELLOW << ">> Breaking Connection..." << RESET << "\n";
+            print_output(run_shell("disconnect"));
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
         }
         else if (choice == "3") {

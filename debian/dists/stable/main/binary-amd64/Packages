@@ -43,25 +43,25 @@ SHA256: 3c913f1bad15c6bfb32baa6acdae5927a2932d87a568d7e5a9132b65fc1e02e1
 Description: C+++ Packaging Wizard
 
 Package: pacforge
-Version: 0.2.4
-Architecture: amd64
-Maintainer: neuwj<neuwj@bk.ru>
-Filename: pool/main/pacforge_0.2.4_amd64.deb
-Size: 26980
-MD5sum: eb80662a479b7933a8d7b91e8ced3b22
-SHA1: 69792da919d058155c96dd6c710562db164ec7a1
-SHA256: 4053d944fa1d81b73e04de5143efb2f8aed21f650ce214f4bece7589b7d8093b
-Description: Packaging wizard
-
-Package: repoforge
-Version: 0.1.6
+Version: 1.1.4
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: pool/main/repoforge_0.1.6_amd64.deb
-Size: 57260
-MD5sum: 8402f2f1de6c93f6ba748a474b687170
-SHA1: 180113ca32a694eb786cfcce13698d74ffbaa19e
-SHA256: a288ac163256ff6ed73cbc807e4d52b1ca4e0d4946281f89705eee47f658b7b4
+Filename: pool/main/pacforge_1.1.4_amd64.deb
+Size: 33632
+MD5sum: e879d4dd8735370f708d0557a7b8d65c
+SHA1: 3dae5c4a078714035baeca255f57150406b1f16f
+SHA256: 3b496806e86e433070fb85003a731d906a0793bb892608491511f2f28bde0534
+Description: Packaging Wizard
+
+Package: repoforge
+Version: 0.1.9
+Architecture: amd64
+Maintainer: neuwj <neuwj@bk.ru>
+Filename: pool/main/repoforge_0.1.9_amd64.deb
+Size: 62456
+MD5sum: ddf986f7b5d69ab9517b3b3d5cdae366
+SHA1: f82a64b9d5dce4f8dd6fcc06268c8785c7909326
+SHA256: d7c576b4717c03b024046d9e3608be80d8f418e3b000ecd76cae3f562a736a27
 Description: Automated Repository Indexer
 
 Package: uninstall
@@ -80,9 +80,9 @@ Version: 1.1.2
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
 Filename: pool/main/warpcpp_1.1.2_amd64.deb
-Size: 38712
-MD5sum: c65b0c382598c679318fb07e9dfeb2da
-SHA1: a847e8fd62debcd0e2c661b58305fa3755f1e3be
-SHA256: 00f01586335f6d907db301740be67d928e8749a461ab1f7a9d773664c83e179c
-Description: warp-cli C++ app
+Size: 38512
+MD5sum: 59c336cf395da3fbf12f2ee138795f1f
+SHA1: 9bb1408c443087938049d4a6fa00acc2ee9ac182
+SHA256: a80894c3743f817103cbd0941177d1567ea2ae84c74d90ad8d8cdabc92107ee1
+Description: Warp app made by neuwj
 
