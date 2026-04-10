@@ -65,15 +65,15 @@ SHA256: d7c576b4717c03b024046d9e3608be80d8f418e3b000ecd76cae3f562a736a27
 Description: Automated Repository Indexer
 
 Package: uninstall
-Version: 0.0.1
+Version: 0.0.2
 Architecture: amd64
-Maintainer: neuwj<neuwj@bk.ru>
-Filename: pool/main/uninstall_0.0.1_amd64.deb
-Size: 8246384
-MD5sum: 012d2e14a8d25044bd23d1dbba5da4e0
-SHA1: 32506c29a5bef56c4fcc24b26e7aa4f36b3596ec
-SHA256: c49f5f9c374eac72bbd9f39a4e77221cac4c187921d2eff536af15a47faef10d
-Description: Easy uninstaller
+Maintainer: neuwj <neuwj@bk.ru>
+Filename: pool/main/uninstall_0.0.2_amd64.deb
+Size: 8249112
+MD5sum: 0cbe76d08c4a686fef3bfe809ee74ee8
+SHA1: 7fee1f17eec28cf00027bcd7d1e01a03412a7d4f
+SHA256: df1bebbf6064014f9b00b29ddb1e01da74bf2352f50a32d2c19bfcafdb76c176
+Description: Easy uninstall tui app
 
 Package: warpcpp
 Version: 1.1.2

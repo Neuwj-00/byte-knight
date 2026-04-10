@@ -1,22 +1,22 @@
 Architectures: amd64
 Codename: stable
-Date: Thu, 09 Apr 2026 06:30:05 +0000
+Date: Fri, 10 Apr 2026 12:39:42 +0000
 Label: RepoForge
 Origin: RepoForge
 Suite: stable
 MD5Sum:
- 8808fa6c8e6517af66c24b2dad5e82ec             1435 Release
- 9c1c04a959b93089b9589f51ffdc6dc1             2707 main/binary-amd64/Packages
- 1208b748194738b1aaaf74cd020021ed             1175 main/binary-amd64/Packages.gz
+ b9d76cb5757c287580c1d2994b3fdc77             1435 Release
+ 40e34c70b6e10e4ce1b46b337c06e388             2714 main/binary-amd64/Packages
+ 821dc9fd9dd7c510faa740c88752c652             1177 main/binary-amd64/Packages.gz
 SHA1:
- 5d96672121eea910eb6ecd8a006578b447ade55d             1435 Release
- baea0e2dccb28d09262862ba428ecbad289fe3c4             2707 main/binary-amd64/Packages
- ff18cfcea4cde76f037b046f25a22370fa58c3cb             1175 main/binary-amd64/Packages.gz
+ 46f03df43dee29e2de1875adee27aaa8ab9e13fb             1435 Release
+ 682aa46f21da0e8d65d54c20e59ab4756211cae4             2714 main/binary-amd64/Packages
+ be43a7368487e9545d0af6ee518f1dd73f922f9f             1177 main/binary-amd64/Packages.gz
 SHA256:
- a7909d5301921370b19dc4c35e9c5548e7c0e32d9384c49790021bed40b1809f             1435 Release
- 34301cc27d3aab42e5eeb8745d9a8a868fd181543036eeae367b698d39100826             2707 main/binary-amd64/Packages
- b8347ee670ce848bdd90d66bd920ca2e70dfb020a6cfcca2447420adfe2af2fa             1175 main/binary-amd64/Packages.gz
+ 1018fd8fe28d18aae234f41908c1d8ec3314345f8a2a3d23042648ab2519672c             1435 Release
+ a682811fd038836e9dfeae9f115c61bbafbcca9eeb8d8f6ae73eba636d2e9588             2714 main/binary-amd64/Packages
+ 4371241d986188c9adb2c98dc5ef33033717deeff725a178059a4e8fb2e507f9             1177 main/binary-amd64/Packages.gz
 SHA512:
- 9c0b41f51c6649bf48f73193f8cd89e0f2cda4f615d938878b6a294ccba7469fd41d7fa826a780d189cf566e15fb1cadd586e1ad4f92a71637104dd3238cee33             1435 Release
- c438c7852bfe20559de1eed067e669d28b1e3c1d5195b03731091163498c2ba022237ae385d8c448a9eaa5303cdabd54588250e159661fc65b4cc3474101de5b             2707 main/binary-amd64/Packages
- 00ed8032aa41787723b78faab008c1f1cd8ba3840b79870ccc96da6205f799f99cdcdb6340c2b6ef5d27f534e22b029a2b933088fe0093d56e01f83a94ec3683             1175 main/binary-amd64/Packages.gz
+ 3cc9ac21ca07833a59d09e630776da069e507892031d15b14744607aabd516a7edafb2ddd01df22c9e864e33fbd4942998498ffbd4d2ec9c950bab4808bc1353             1435 Release
+ a4ba9c70102d70e9ac522877d8e0246711649dffbc5734ea86be76e3b3b8ef8555b9c4e16cd3237777606898eae5df6b2d18cdb6cbb3cffeafca929fe129c0f9             2714 main/binary-amd64/Packages
+ 24cb3450a63a9de5dfa3e3388e903eca02bb02d9e00a8dbcbaf3f95605fd1da0558449a75e3e569429f206dd2348fea39b186903136d0eb5d2396d549e2c07f5             1177 main/binary-amd64/Packages.gz

@@ -6,9 +6,9 @@ echo "=================================================="
 echo "[*] Initialization started..."
 echo ""
 
-
 echo "[*] Step 1: Downloading and adding GPG key..."
-if ! wget -qO- https://neuwj-00.github.io/byte-knight/keys/public.key | sudo gpg --dearmor --yes -o /usr/share/keyrings/byte-knight-keyring.gpg; then
+sudo install -m 0755 -d /etc/apt/keyrings
+if ! wget -qO- https://neuwj-00.github.io/byte-knight/keys/public.key | sudo gpg --dearmor --yes -o /etc/apt/keyrings/byte-knight.gpg; then
     echo ""
     echo "[-] ERROR: Failed to download or add the GPG key!"
     echo "[-] Please check your internet connection and try the steps manually."
@@ -19,7 +19,7 @@ fi
 echo ""
 
 echo "[*] Step 2: Adding the repository to sources list..."
-if ! echo "deb [arch=amd64 signed-by=/usr/share/keyrings/byte-knight-keyring.gpg] https://neuwj-00.github.io/byte-knight/debian stable main" | sudo tee /etc/apt/sources.list.d/byte-knight.list > /dev/null; then
+if ! echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/byte-knight.gpg] https://neuwj-00.github.io/byte-knight/debian stable main" | sudo tee /etc/apt/sources.list.d/byte-knight.list > /dev/null; then
     echo ""
     echo "[-] ERROR: Failed to add the repository to the sources list!"
     echo "[-] Please check your permissions and try manually."
