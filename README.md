@@ -2,8 +2,6 @@
 
 # Byte-Knight
 
-[![Sponsor](https://img.shields.io/badge/Sponsor-Neuwj--00-pink?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/Neuwj-00)
-
 **A Custom Linux Package Repository by Neuwj**
 
 ![GPL v3](https://img.shields.io/badge/License-GPL_v3-blue?style=for-the-badge&logo=gnu&logoColor=white)
