@@ -43,25 +43,25 @@ SHA256: 3c913f1bad15c6bfb32baa6acdae5927a2932d87a568d7e5a9132b65fc1e02e1
 Description: C+++ Packaging Wizard
 
 Package: pacforge
-Version: 1.1.4
+Version: 2.0.1
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: pool/main/pacforge_1.1.4_amd64.deb
-Size: 33632
-MD5sum: e879d4dd8735370f708d0557a7b8d65c
-SHA1: 3dae5c4a078714035baeca255f57150406b1f16f
-SHA256: 3b496806e86e433070fb85003a731d906a0793bb892608491511f2f28bde0534
-Description: Packaging Wizard
+Filename: pool/main/pacforge_2.0.1_amd64.deb
+Size: 32992
+MD5sum: d978b2b0b6442c225a959fbdfc790503
+SHA1: 4c84c91e61ba323ea380af61f4933c6b8bd05b8f
+SHA256: 669abfed0f34e16c58c73a413fb1d837ea5900b4a4502270b40d0ff3495c7292
+Description: Packaging wizard
 
 Package: repoforge
-Version: 0.1.9
+Version: 0.3.8
 Architecture: amd64
 Maintainer: neuwj <neuwj@bk.ru>
-Filename: pool/main/repoforge_0.1.9_amd64.deb
-Size: 62456
-MD5sum: ddf986f7b5d69ab9517b3b3d5cdae366
-SHA1: f82a64b9d5dce4f8dd6fcc06268c8785c7909326
-SHA256: d7c576b4717c03b024046d9e3608be80d8f418e3b000ecd76cae3f562a736a27
+Filename: pool/main/repoforge_0.3.8_amd64.deb
+Size: 54332
+MD5sum: c4049218a2343134863f569db1e8b53b
+SHA1: fec4192f157a3a77b8ef4ac361dc197d156af217
+SHA256: 6e520d5e5a92df49947d5b2b3b9bf264d35e0a2d990d714001a86c3fad78e4c6
 Description: Automated Repository Indexer
 
 Package: uninstall
