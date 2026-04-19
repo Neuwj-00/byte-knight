@@ -1,22 +1,22 @@
 Architectures: amd64
 Codename: stable
-Date: Sun, 19 Apr 2026 06:09:22 +0000
+Date: Sun, 19 Apr 2026 06:12:44 +0000
 Label: RepoForge
 Origin: RepoForge
 Suite: stable
 MD5Sum:
- f6082c0c52b61e706c00759ab7a76907             1435 Release
+ d3bcfe111a2602686d541040ea9142e7             1435 Release
  c5591b578c4c44c1518ef4c3d634abbf             2714 main/binary-amd64/Packages
- f62237c1b6c6a8e98a1658017e13252d             1178 main/binary-amd64/Packages.gz
+ 0214a5a57540cd3eb79dd38fd78730b5             1178 main/binary-amd64/Packages.gz
 SHA1:
- 2383a1b1a396659f92d34ffc8d9aa08098ae548f             1435 Release
+ 431178a06331f92a464dda3e01c5041529012277             1435 Release
  a1c6d78ce02a9469158365c6b077efc2eaec088c             2714 main/binary-amd64/Packages
- 644481bfbb2e2ef68b1b47f0c7ee1791c99726f3             1178 main/binary-amd64/Packages.gz
+ 704b7e8a79d0c4869bcee052bda883540332c79a             1178 main/binary-amd64/Packages.gz
 SHA256:
- 714eab4000a08c675992990815728d4bcf3f808fb8fdf1fa8f0f12c8793349b9             1435 Release
+ 343ecabd9fc2162a82bcc984ee7b153a53bba29f3c0efbc1a3bb24645f4075a5             1435 Release
  9cf5209359eae0a118d2ce2150787ae9983d229738eec4db721d87f290a83b02             2714 main/binary-amd64/Packages
- d9a633e471ee169cce78ca07d9435152d4daf37768ff6d810952c03d4a33ae84             1178 main/binary-amd64/Packages.gz
+ 6a116a8b8c2f4234d80c21f800522831e6dfd76f07f0b25c86b358657f79615e             1178 main/binary-amd64/Packages.gz
 SHA512:
- e8010202d4b30d13b9e3a15daba8374eb6a687c6fa462f97871b3e3070253f7067095f6409cd5d003727068750fa2bc1322597ccc65679a42a72c87e7da686b2             1435 Release
+ 9067f559b9c4c8d96f91cdbc14e8c667d55965af16be0dcbc80294e5f04465022e92f1e4dec0c00ac2ac816e5cae809333168ff32bee76e7dd4c37c103dc6c0b             1435 Release
  a84c65f8f88c7e490dbb596f98155773536989660130934f302a7c98d522c6532f01ef5e4b6fb976bc36f648953882a4ac07e7d6a128142ab4fca80cc7d0927f             2714 main/binary-amd64/Packages
- 350e315ca30712125a791bf5db3c8b17acd218e5893131b59636498f154dd7e5ac5c6c98357a5ebb295abd6a77d55457342ae080f3c128921fb89f527827927d             1178 main/binary-amd64/Packages.gz
+ 06507a304298525453986a04bb41a04733210b38144de90696166a91d06a755a4119b963b71158c959777fa51918db5b88f930af6a9871a09e7c06ead0efd20a             1178 main/binary-amd64/Packages.gz
