@@ -14,8 +14,14 @@ const RED: &str = "\x1b[31m";
 const CYAN: &str = "\x1b[36m";
 
 fn clear_screen() {
-    print!("\x1B[2J\x1B[1;1H");
-    io::stdout().flush().unwrap();
+    if cfg!(target_os = "windows") {
+        // Windows platformları için ekran temizleme
+        let _ = Command::new("cmd").args(["/c", "cls"]).status();
+    } else {
+        // Linux ve macOS (Unix) için ekran temizleme
+        print!("\x1B[2J\x1B[1;1H");
+        io::stdout().flush().expect("Terminal çıktısı temizlenemedi.");
+    }
 }
 
 fn sleep_ms(ms: u64) {
@@ -27,7 +33,7 @@ fn print_banner() {
     println!("{BOLD}{BLUE}================================================={RESET}");
     println!("{BOLD}{CYAN}      o      {RESET}{BOLD}gitForge{RESET}");
     println!("{BOLD}{CYAN}     / \\     {RESET}Toolkit: Git & GPG Automation");
-    println!("{BOLD}{CYAN}    o   o    {RESET}Version: 0.0.1");
+    println!("{BOLD}{CYAN}    o   o    {RESET}Version: 1.0.0"); // V1.0.0 Tam Sürüm!
     println!("{BOLD}{CYAN}    |  /     {RESET}Developer: Neuwj");
     println!("{BOLD}{CYAN}    | o      {RESET}Contact:   neuwj@bk.ru");
     println!("{BOLD}{CYAN}    |/       {RESET}");
@@ -63,10 +69,10 @@ fn has_command(cmd: &str) -> bool {
 fn ask_input(question: &str, is_required: bool) -> String {
     loop {
         print!("{YELLOW}[?]{RESET} {BOLD}{}:{RESET} ", question);
-        io::stdout().flush().unwrap();
+        io::stdout().flush().expect("Terminal çıktısı yazılamadı.");
 
         let mut input = String::new();
-        io::stdin().read_line(&mut input).unwrap();
+        io::stdin().read_line(&mut input).expect("Girdi okunamadı.");
         let trimmed = input.trim().to_string();
 
         if trimmed.is_empty() && is_required {
@@ -79,9 +85,9 @@ fn ask_input(question: &str, is_required: bool) -> String {
 
 fn wait_for_enter() {
     print!("\n{CYAN}Press [ENTER] to continue...{RESET}");
-    io::stdout().flush().unwrap();
+    io::stdout().flush().expect("Terminal çıktısı yazılamadı.");
     let mut dummy = String::new();
-    io::stdin().read_line(&mut dummy).unwrap();
+    io::stdin().read_line(&mut dummy).expect("Girdi okunamadı.");
 }
 
 fn run_cmd(cmd: &str) {
@@ -90,6 +96,26 @@ fn run_cmd(cmd: &str) {
     let status = Command::new("sh")
     .arg("-c")
     .arg(cmd)
+    .status();
+
+    match status {
+        Ok(exit_status) if exit_status.success() => {
+            print_success("Operation completed successfully.");
+        }
+        Ok(_) => {
+            print_error("Command resulted in an error or was canceled.");
+        }
+        Err(e) => {
+            print_error(&format!("System error: {}", e));
+        }
+    }
+}
+
+fn run_safe_cmd(program: &str, args: &[&str]) {
+    print_step(&format!("Executing: {} {}", program, args.join(" ")));
+
+    let status = Command::new(program)
+    .args(args)
     .status();
 
     match status {
@@ -147,19 +173,19 @@ fn menu_setup() {
             "1" => run_cmd("git init"),
             "2" => {
                 let url = ask_input("Clone URL", true);
-                if url.to_lowercase() != "q" { run_cmd(&format!("git clone {}", url)); }
+                if url.to_lowercase() != "q" { run_safe_cmd("git", &["clone", &url]); }
             }
             "3" => {
                 let url = ask_input("Remote Repo URL (origin)", true);
-                if url.to_lowercase() != "q" { run_cmd(&format!("git remote add origin {}", url)); }
+                if url.to_lowercase() != "q" { run_safe_cmd("git", &["remote", "add", "origin", &url]); }
             }
             "4" => {
                 let name = ask_input("Your Git Username", true);
                 if name.to_lowercase() != "q" {
                     let email = ask_input("Your Git Email", true);
                     if email.to_lowercase() != "q" {
-                        run_cmd(&format!("git config --global user.name \"{}\"", name));
-                        run_cmd(&format!("git config --global user.email \"{}\"", email));
+                        run_safe_cmd("git", &["config", "--global", "user.name", &name]);
+                        run_safe_cmd("git", &["config", "--global", "user.email", &email]);
                     }
                 }
             }
@@ -185,7 +211,9 @@ fn menu_daily_workflow() {
             "2" => run_cmd("git add ."),
             "3" => {
                 let msg = ask_input("Commit message", true);
-                if msg.to_lowercase() != "q" { run_cmd(&format!("git commit -m \"{}\"", msg)); }
+                if msg.to_lowercase() != "q" {
+                    run_safe_cmd("git", &["commit", "-S", "-m", &msg]);
+                }
             }
             "4" => run_cmd("git push"),
             "5" => {
@@ -222,27 +250,27 @@ fn menu_branching() {
             "1" => run_cmd("git branch -a"),
             "2" => {
                 let bname = ask_input("New branch name", true);
-                if bname.to_lowercase() != "q" { run_cmd(&format!("git branch {}", bname)); }
+                if bname.to_lowercase() != "q" { run_safe_cmd("git", &["branch", &bname]); }
             }
             "3" => {
                 let bname = ask_input("Branch name to switch", true);
-                if bname.to_lowercase() != "q" { run_cmd(&format!("git switch {}", bname)); }
+                if bname.to_lowercase() != "q" { run_safe_cmd("git", &["switch", &bname]); }
             }
             "4" => {
                 let bname = ask_input("Branch name to merge into current", true);
-                if bname.to_lowercase() != "q" { run_cmd(&format!("git merge {}", bname)); }
+                if bname.to_lowercase() != "q" { run_safe_cmd("git", &["merge", &bname]); }
             }
             "5" => {
                 let bname = ask_input("Base branch to rebase onto", true);
-                if bname.to_lowercase() != "q" { run_cmd(&format!("git rebase {}", bname)); }
+                if bname.to_lowercase() != "q" { run_safe_cmd("git", &["rebase", &bname]); }
             }
             "6" => {
                 let hash = ask_input("Commit Hash to copy", true);
-                if hash.to_lowercase() != "q" { run_cmd(&format!("git cherry-pick {}", hash)); }
+                if hash.to_lowercase() != "q" { run_safe_cmd("git", &["cherry-pick", &hash]); }
             }
             "7" => {
                 let bname = ask_input("Branch name to delete", true);
-                if bname.to_lowercase() != "q" { run_cmd(&format!("git branch -d {}", bname)); }
+                if bname.to_lowercase() != "q" { run_safe_cmd("git", &["branch", "-d", &bname]); }
             }
             "q" | "Q" => break,
             _ => print_error("Invalid choice!"),
@@ -267,13 +295,15 @@ fn menu_gpg_security() {
             "3" => {
                 let keyid = ask_input("Key ID", true);
                 if keyid.to_lowercase() != "q" {
-                    run_cmd(&format!("gpg --export --armor {} > public_key.asc", keyid));
+                    // SON DÜZELTME: Shell (sh) yerine direkt GPG kullanıldı ve --output bayrağı eklendi.
+                    // Artık komut enjeksiyonu riski %0!
+                    run_safe_cmd("gpg", &["--export", "--armor", "--output", "public_key.asc", &keyid]);
                 }
             }
             "4" => {
                 let msg = ask_input("Commit message", true);
                 if msg.to_lowercase() != "q" {
-                    run_cmd(&format!("git commit -S -m \"{}\"", msg));
+                    run_safe_cmd("git", &["commit", "-S", "-m", &msg]);
                 }
             }
             "5" => run_cmd("git verify-commit HEAD"),
@@ -301,7 +331,7 @@ fn menu_advanced() {
             "2" => {
                 let name = ask_input("Archive name (e.g., project_v1)", true);
                 if name.to_lowercase() != "q" {
-                    run_cmd(&format!("git archive --format=tar.gz -o {}.tar.gz HEAD", name));
+                    run_safe_cmd("git", &["archive", "--format=tar.gz", &format!("-o={}.tar.gz", name), "HEAD"]);
                 }
             }
             "3" => run_cmd("git stash list"),

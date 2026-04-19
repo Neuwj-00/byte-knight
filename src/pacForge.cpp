@@ -9,6 +9,9 @@
 #include <cctype>
 #include <stdexcept>
 #include <algorithm>
+#include <csignal>
+#include <iomanip>
+#include <cstdint>
 
 namespace fs = std::filesystem;
 
@@ -20,16 +23,17 @@ const std::string YELLOW = "\033[33m";
 const std::string RED = "\033[31m";
 const std::string CYAN = "\033[36m";
 
+volatile sig_atomic_t gSignalStatus = 0;
+
+void signalHandler(int signal) {
+    gSignalStatus = signal;
+}
+
 class AbortOperation : public std::exception {
 public:
     const char* what() const noexcept override {
         return "Operation aborted by user.";
     }
-};
-
-struct AuthMeta {
-    std::string license;
-    std::string cert;
 };
 
 struct PackageData {
@@ -40,11 +44,40 @@ struct PackageData {
     std::string release;
     std::string arch;
     std::string maintainer;
-    AuthMeta authMeta;
+    std::string license;
     std::string description;
     std::string installDir;
     std::string outputDir;
 };
+
+struct SessionCache {
+    std::string maintainer;
+    std::string outputDir;
+    std::string installDir = "/usr/bin";
+    std::string arch;
+    std::string release = "1";
+    std::string license;
+};
+
+// FIX: Strip trailing slashes to prevent // path corruption in RPM/DEB build.
+void stripTrailingSlashes(std::string& str) {
+    while (str.length() > 1 && str.back() == '/') {
+        str.pop_back();
+    }
+}
+
+// FIX: Check if directory is a standard Linux path to prevent RPM from taking ownership of system dirs.
+bool isStandardDir(const std::string& dir) {
+    std::vector<std::string> standardDirs = {
+        "/usr/bin", "/usr/local/bin", "/bin", "/sbin", "/usr/lib", "/usr/lib64", "/opt", "/usr", "/usr/local", "/etc"
+    };
+    return std::find(standardDirs.begin(), standardDirs.end(), dir) != standardDirs.end();
+}
+
+std::string toLower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return std::tolower(c); });
+    return s;
+}
 
 void clearScreen() {
     std::system("clear");
@@ -57,18 +90,26 @@ void sleepMs(int ms) {
 void waitForEnter() {
     std::cout << "\n" << CYAN << "Press [ENTER] to continue..." << RESET;
     std::string dummy;
-    if (!std::getline(std::cin, dummy)) std::exit(0);
+    gSignalStatus = 0;
+    if (!std::getline(std::cin, dummy)) {
+        if (gSignalStatus == SIGINT) {
+            std::cin.clear();
+            std::cout << "\n";
+            gSignalStatus = 0;
+            throw AbortOperation();
+        }
+    }
 }
 
 void printBanner() {
     clearScreen();
     std::cout << BOLD << BLUE << "=================================================\n" << RESET;
     std::cout << BOLD << YELLOW << "   .===.   " << RESET << BOLD << "PACKAGE FORGE\n";
-    std::cout << BOLD << YELLOW << "   | " << CYAN << "*" << YELLOW << " |   " << RESET << "C++ Packaging Wizard | v1.1.4\n";
+    std::cout << BOLD << YELLOW << "   | " << CYAN << "*" << YELLOW << " |   " << RESET << "C++ Packaging Wizard | v2.0.4\n";
     std::cout << BOLD << YELLOW << "    \\ /    " << CYAN << "Created by: Neuwj - neuwj@bk.ru\n";
     std::cout << BOLD << YELLOW << "     V     " << RESET << "\n";
     std::cout << BOLD << BLUE << "=================================================\n" << RESET;
-    std::cout << CYAN << " Tip: Type '0' for Guide, or 'p' to Cancel!\n\n" << RESET;
+    std::cout << CYAN << " Tip: Type '!guide' for Help, or press [Ctrl+C] to Abort anytime!\n\n" << RESET;
 }
 
 void printError(const std::string& message) {
@@ -96,18 +137,13 @@ bool isValidStrictFormat(const std::string& str) {
 
 std::string trimPath(std::string path) {
     if (path.empty()) return path;
-
     size_t start = path.find_first_not_of(" \t\r\n");
     if (start == std::string::npos) return "";
-
     path.erase(0, start);
     path.erase(path.find_last_not_of(" \t\r\n") + 1);
-
     if (path.empty()) return path;
-
     if (path.front() == '\'' || path.front() == '"') path.erase(0, 1);
     if (!path.empty() && (path.back() == '\'' || path.back() == '"')) path.pop_back();
-
     return path;
 }
 
@@ -139,543 +175,329 @@ void openGuide() {
     std::cout << "\033[1;36m========================================\033[0m\n";
     std::cout << "\033[1;36m          PACKAGE FORGE GUIDE           \033[0m\n";
     std::cout << "\033[1;36m========================================\033[0m\n\n";
-    std::cout << "\033[1;33m[?] Package Name:\033[0m myapp\n";
-    std::cout << "    -> (Only lowercase letters, no spaces)\n\n";
-    std::cout << "\033[1;33m[?] Version:\033[0m 1.0.0\n";
-    std::cout << "\033[1;33m[?] Architecture:\033[0m amd64\n";
-    std::cout << "    -> (Usually 'amd64' for 64-bit systems)\n\n";
-    std::cout << "\033[1;33m[?] Release:\033[0m 1\n";
-    std::cout << "    -> (RPM build release number, usually 1)\n\n";
-    std::cout << "\033[1;33m[?] Maintainer:\033[0m Developer <dev@example.com>\n";
-    std::cout << "    -> (Your name and email address)\n\n";
-    std::cout << "\033[1;33m[?] Description:\033[0m A great terminal application\n";
-    std::cout << "\033[1;33m[?] Binary Path:\033[0m /home/user/Documents/myapp\n";
-    std::cout << "    -> (FULL path to your compiled binary, you can drag and drop)\n\n";
-    std::cout << "\033[1;33m[?] Install Dir:\033[0m /usr/bin\n";
-    std::cout << "    -> (Where it will be installed on the user's system)\n\n";
-    std::cout << "\033[1;33m[?] Output Directory:\033[0m /home/user/Desktop\n";
-    std::cout << "    -> (Where the final package will be saved)\n\n";
+    std::cout << BOLD << RED << "[!] CRITICAL RULE: " << RESET << "This tool packages COMPILED BINARY FILES.\n";
+    std::cout << "Do not use source codes (.cpp, .py). Compile your binary first!\n\n";
+    std::cout << "\033[1;32mDRAG & DROP SYSTEM:\033[0m\n";
+    std::cout << "You can drag multiple binary files into the terminal at once.\n";
+    std::cout << "The program will parse them even if they contain spaces or backslashes.\n";
+    std::cout << "Once done, type 'confirm' to start the configuration.\n\n";
+    std::cout << "\033[1;33m[?] Tips:\033[0m\n";
+    std::cout << "  -> Press [Ctrl+C] anytime to return to the main menu.\n";
+    std::cout << "  -> Most fields are cached after the first entry for speed.\n\n";
     std::cout << "\033[1;32mPress [ENTER] to close and continue...\033[0m\n";
     std::string dummy;
-    std::getline(std::cin, dummy);
-}
-
-std::string askInput(const std::string& question, bool isRequired = true, bool strictFormat = false, bool ignoreGuideKey = false, bool checkExists = false) {
-    std::string input;
-    while (true) {
-        std::cout << YELLOW << "[?] " << RESET << BOLD << question << ": " << RESET;
-        std::getline(std::cin, input);
-
-        input = trimPath(input);
-
-        if (input == "p" || input == "P") {
+    gSignalStatus = 0;
+    if (!std::getline(std::cin, dummy)) {
+        if (gSignalStatus == SIGINT) {
+            std::cin.clear();
+            std::cout << "\n";
+            gSignalStatus = 0;
             throw AbortOperation();
         }
+    }
+}
 
-        if (input == "0" && !ignoreGuideKey) {
-            openGuide();
-            continue;
+std::string askInput(const std::string& question, bool isRequired = true, bool strictFormat = false, bool ignoreGuideKey = false, bool checkExists = false, const std::string& defaultValue = "") {
+    std::string input;
+    while (true) {
+        if (!defaultValue.empty()) {
+            std::cout << YELLOW << "[?] " << RESET << BOLD << question << " (Default: " << defaultValue << "): " << RESET;
+        } else {
+            std::cout << YELLOW << "[?] " << RESET << BOLD << question << ": " << RESET;
         }
 
-        if (input.empty()) {
-            if (isRequired) {
-                printError("This field cannot be empty. Please provide a value.");
-                continue;
-            } else {
-                return "";
+        gSignalStatus = 0;
+        if (!std::getline(std::cin, input)) {
+            if (gSignalStatus == SIGINT) {
+                std::cin.clear();
+                std::cout << "\n";
+                gSignalStatus = 0;
+                throw AbortOperation();
             }
+            std::exit(0);
+        }
+
+        input = trimPath(input);
+        std::string loweredInput = toLower(input);
+
+        if (loweredInput == "!cancel") throw AbortOperation();
+        if (loweredInput == "!guide" && !ignoreGuideKey) { openGuide(); continue; }
+
+        if (input.empty()) {
+            if (!defaultValue.empty()) return defaultValue;
+            if (isRequired) { printError("Field required."); continue; }
+            return "";
         }
 
         input = expandTilde(input);
-
         if (strictFormat && !isValidStrictFormat(input)) {
-            printError("Invalid format! Only lowercase letters, numbers, dashes (-), dots (.), and underscores (_). No spaces!");
+            printError("Invalid format! No spaces, lowercase only.");
             continue;
         }
-
         if (checkExists && !fs::is_regular_file(input)) {
-            printError("Valid file not found! (Make sure you entered a file path, not a folder): " + input);
+            printError("File not found: " + input);
             continue;
         }
-
         return input;
     }
 }
 
-void promptMovePackage(const std::string& currentPath) {
-    std::cout << "\n";
-    std::string question = "Would you like to move the generated package (" + currentPath + ") to another location? [y/N]";
-    std::string choice = askInput(question, false);
+std::string askLicense(const std::string& contextName, SessionCache& cache) {
+    std::cout << "\n" << BOLD << CYAN << "--- LICENSE FOR " << contextName << " ---" << RESET << "\n";
 
-    if (choice == "y" || choice == "Y") {
-        std::string newLocation = askInput("Enter the new destination directory path");
-        if (!newLocation.empty()) {
-            printStep("Moving package");
-            try {
-                fs::create_directories(newLocation);
-                std::string fileName = fs::path(currentPath).filename().string();
-                std::string newFilePath = newLocation + "/" + fileName;
+    const char* licenses[30] = {
+        "MIT", "Apache-2.0", "GPL-3.0-only", "GPL-3.0-or-later", "GPL-2.0-only",
+        "LGPL-3.0-only", "LGPL-2.1-only", "AGPL-3.0-only", "BSD-3-Clause", "BSD-2-Clause",
+        "MPL-2.0", "EPL-2.0", "Unlicense", "CC0-1.0", "CC-BY-4.0",
+        "CC-BY-SA-4.0", "ISC", "Zlib", "Artistic-2.0", "BSL-1.0",
+        "CDDL-1.0", "EUPL-1.2", "OFL-1.1", "OSL-3.0", "PostgreSQL",
+        "MS-PL", "MS-RL", "CERN-OHL-S-2.0", "Proprietary", "Unknown"
+    };
 
-                fs::copy_file(currentPath, newFilePath, fs::copy_options::overwrite_existing);
-                fs::remove(currentPath);
+    for (int i = 0; i < 30; i += 3) {
+        std::cout << " " << std::right << std::setw(2) << i + 1 << ") " << std::left << std::setw(17) << licenses[i]
+        << " " << std::right << std::setw(2) << i + 2 << ") " << std::left << std::setw(17) << licenses[i+1]
+        << " " << std::right << std::setw(2) << i + 3 << ") " << std::left << std::setw(17) << licenses[i+2] << "\n";
+    }
+    std::cout << "  c) Custom\n\n";
 
-                printSuccess("Package successfully moved to: " + newFilePath);
-            } catch (const std::exception& e) {
-                printError(std::string("Failed to move package: ") + e.what());
-            }
+    while (true) {
+        std::string choice = askInput("Choose License (1-30 or 'c')", true, false, true, false, cache.license);
+        std::string lowerChoice = toLower(choice);
+
+        if (!cache.license.empty() && choice == cache.license) {
+            return cache.license;
         }
+
+        if (lowerChoice == "c") {
+            cache.license = askInput("License Name");
+            return cache.license;
+        }
+
+        try {
+            int idx = std::stoi(choice);
+            if (idx >= 1 && idx <= 30) {
+                cache.license = licenses[idx - 1];
+                return cache.license;
+            }
+        } catch (...) {}
+
+        printError("Invalid choice.");
     }
 }
 
-AuthMeta askLicenseAndCert(const std::string& contextName) {
-    std::cout << "\n" << BOLD << CYAN << "--- LICENSE AND CERTIFICATE FOR " << contextName << " ---" << RESET << "\n";
-    std::cout << YELLOW << "Software Licenses:" << RESET << "\n";
-    std::cout << "  [1] MIT            [6] AGPL v3.0      [11] ISC License\n";
-    std::cout << "  [2] Apache 2.0     [7] BSD 3-Clause   [12] The Unlicense\n";
-    std::cout << "  [3] GPL v3.0       [8] BSD 2-Clause   [13] CC BY\n";
-    std::cout << "  [4] GPL v2.0       [9] MPL 2.0        [14] CC BY-SA\n";
-    std::cout << "  [5] LGPL v3.0      [10] EPL 2.0       [15] CC0 (Zero)\n";
-    std::cout << "  [" << GREEN << "c" << RESET << "] Enter Custom License Name\n";
-
-    std::cout << YELLOW << "\nIT Certifications (Bonus):" << RESET << "\n";
-    std::cout << "  [16] LPI Linux Ess.[21] Cisco CCNA    [26] CISSP\n";
-    std::cout << "  [17] LPIC-1        [22] AWS Sol. Arch.[27] CEH\n";
-    std::cout << "  [18] CompTIA A+    [23] Azure AZ-104  [28] CKA\n";
-    std::cout << "  [19] CompTIA Net+  [24] Google IT Sup.[29] PMP\n";
-    std::cout << "  [20] CompTIA Sec+  [25] RHCSA         [30] ITIL 4 Found.\n";
-    std::cout << "  [" << GREEN << "c" << RESET << "] Enter Custom Certificate [" << RED << "0" << RESET << "] Skip Certification\n\n";
-
-    AuthMeta meta;
-
-    while (true) {
-        std::string choice = askInput("Choose Software License for " + contextName + " (1-15 or 'c')", true, false);
-        if (choice == "1") { meta.license = "MIT"; break; }
-        else if (choice == "2") { meta.license = "Apache-2.0"; break; }
-        else if (choice == "3") { meta.license = "GPL-3.0"; break; }
-        else if (choice == "4") { meta.license = "GPL-2.0"; break; }
-        else if (choice == "5") { meta.license = "LGPL-3.0"; break; }
-        else if (choice == "6") { meta.license = "AGPL-3.0"; break; }
-        else if (choice == "7") { meta.license = "BSD-3-Clause"; break; }
-        else if (choice == "8") { meta.license = "BSD-2-Clause"; break; }
-        else if (choice == "9") { meta.license = "MPL-2.0"; break; }
-        else if (choice == "10") { meta.license = "EPL-2.0"; break; }
-        else if (choice == "11") { meta.license = "ISC"; break; }
-        else if (choice == "12") { meta.license = "Unlicense"; break; }
-        else if (choice == "13") { meta.license = "CC-BY-4.0"; break; }
-        else if (choice == "14") { meta.license = "CC-BY-SA-4.0"; break; }
-        else if (choice == "15") { meta.license = "CC0-1.0"; break; }
-        else if (choice == "c" || choice == "C") { meta.license = askInput("Enter Custom License Name"); break; }
-        else { printError("Invalid selection! Please enter a number between 1-15 or 'c'."); }
-    }
-
-    while (true) {
-        std::string choice = askInput("Choose IT Certificate for " + contextName + " (16-30, 'c', or '0')", true, false, true);
-        if (choice == "0") { meta.cert = ""; break; }
-        else if (choice == "16") { meta.cert = "LPI-Linux-Essentials"; break; }
-        else if (choice == "17") { meta.cert = "LPIC-1"; break; }
-        else if (choice == "18") { meta.cert = "CompTIA-A+"; break; }
-        else if (choice == "19") { meta.cert = "CompTIA-Network+"; break; }
-        else if (choice == "20") { meta.cert = "CompTIA-Security+"; break; }
-        else if (choice == "21") { meta.cert = "Cisco-CCNA"; break; }
-        else if (choice == "22") { meta.cert = "AWS-Solutions-Architect"; break; }
-        else if (choice == "23") { meta.cert = "Azure-Administrator-AZ-104"; break; }
-        else if (choice == "24") { meta.cert = "Google-IT-Support"; break; }
-        else if (choice == "25") { meta.cert = "RHCSA"; break; }
-        else if (choice == "26") { meta.cert = "CISSP"; break; }
-        else if (choice == "27") { meta.cert = "CEH"; break; }
-        else if (choice == "28") { meta.cert = "CKA"; break; }
-        else if (choice == "29") { meta.cert = "PMP"; break; }
-        else if (choice == "30") { meta.cert = "ITIL-4-Foundation"; break; }
-        else if (choice == "c" || choice == "C") { meta.cert = askInput("Enter Custom Certificate Name"); break; }
-        else { printError("Invalid selection! Please enter a number between 16-30, 'c', or '0'."); }
-    }
-
-    return meta;
-}
-
-PackageData gatherPackageInfo(const std::string& binaryPath, bool needDeb, bool needRpm) {
+PackageData gatherPackageInfo(const std::string& binaryPath, bool needDeb, bool needRpm, SessionCache& cache) {
     PackageData data;
     data.binaryPath = binaryPath;
     data.binaryName = fs::path(binaryPath).filename().string();
+    std::cout << "\n" << BOLD << CYAN << "=== DATA ENTRY: " << data.binaryName << " ===" << RESET << "\n";
 
-    std::cout << "\n" << BOLD << CYAN << "=== ENTER INFORMATION: " << data.binaryName << " ===" << RESET << "\n";
+    // FIX: Debian rules require package names to start with an alphanumeric character.
+    while (true) {
+        data.pkgName = askInput("Package Name", true, true);
+        std::replace(data.pkgName.begin(), data.pkgName.end(), '_', '-');
+        if (data.pkgName.empty() || !std::isalpha(data.pkgName[0]) || data.pkgName.length() < 2) {
+            printError("Package name must start with a letter and be at least 2 characters long.");
+            continue;
+        }
+        break;
+    }
 
-    data.pkgName = askInput("Package Name for " + data.binaryName, true, true);
-    data.version = askInput("Version for " + data.binaryName, true, true);
+    // FIX: Debian rules require version numbers to start with a digit.
+    while (true) {
+        data.version = askInput("Version", true, true);
+        std::replace(data.version.begin(), data.version.end(), '_', '.');
+        std::replace(data.version.begin(), data.version.end(), '-', '.');
+        if (data.version.empty() || !std::isdigit(data.version[0])) {
+            printError("Version must start with a digit (e.g., 1.0.0).");
+            continue;
+        }
+        break;
+    }
 
     if (needDeb) {
-        data.arch = askInput("Architecture for " + data.binaryName + " (e.g., amd64)", true, true);
-        if (data.arch == "x86_64") {
-            std::cout << YELLOW << "[!] Warning: Debian uses 'amd64' instead of 'x86_64'. Auto-corrected." << RESET << "\n";
-            data.arch = "amd64";
-        }
+        data.arch = askInput("Architecture", true, true, false, false, cache.arch);
+        if (data.arch == "x86_64") data.arch = "amd64";
+        else if (data.arch == "aarch64") data.arch = "arm64"; // FIX: Map aarch64 to arm64 for Debian compatibility
+        cache.arch = data.arch;
     }
-    if (needRpm) data.release = askInput("Release for " + data.binaryName + " (e.g., 1)", true, true);
-
-    data.maintainer = askInput("Maintainer for " + data.binaryName + " (Name <email>)");
-
-    if (data.maintainer.find('<') == std::string::npos || data.maintainer.find('>') == std::string::npos) {
-        std::cout << YELLOW << "[!] Warning: Debian format requires a full email tag. Auto-correcting..." << RESET << "\n";
-        data.maintainer += " <" + data.pkgName + "@localhost.localdomain>";
+    if (needRpm) {
+        data.release = askInput("RPM Release", true, true, false, false, cache.release);
+        cache.release = data.release;
     }
+    data.maintainer = askInput("Maintainer (Name <email>)", true, false, false, false, cache.maintainer);
+    cache.maintainer = data.maintainer;
+    data.license = askLicense(data.binaryName, cache);
+    data.description = askInput("Description", false);
 
-    data.authMeta = askLicenseAndCert(data.binaryName);
-    data.description = askInput("Description for " + data.binaryName, false);
-
-    if (!data.authMeta.cert.empty()) {
-        if (data.description.empty()) {
-            data.description = "Packaged by certified professional: " + data.authMeta.cert;
-        } else {
-            data.description += " [Certified by: " + data.authMeta.cert + "]";
-        }
+    if (data.description.empty()) {
+        data.description = "No description provided.";
     }
 
-    data.installDir = askInput("Install Dir for " + data.binaryName + " (e.g., /usr/bin)");
+    data.installDir = askInput("Install Dir", true, false, false, false, cache.installDir);
+    stripTrailingSlashes(data.installDir);
+    cache.installDir = data.installDir;
+    if (!data.installDir.empty() && data.installDir[0] != '/') data.installDir = "/" + data.installDir;
 
-    if (!data.installDir.empty() && data.installDir[0] != '/') {
-        data.installDir = "/" + data.installDir;
-    }
-    if (data.installDir.length() > 1 && data.installDir.back() == '/') {
-        data.installDir.pop_back();
-    }
-
-    data.outputDir = askInput("Output Directory for " + data.binaryName);
+    data.outputDir = askInput("Output Dir", true, false, false, false, cache.outputDir);
+    stripTrailingSlashes(data.outputDir);
+    cache.outputDir = data.outputDir;
 
     return data;
 }
 
-void buildDebian(const PackageData& data, bool isBatch = false) {
+void buildDebian(const PackageData& data) {
     std::string safePkgName = data.pkgName;
-    std::replace(safePkgName.begin(), safePkgName.end(), '_', '-');
     std::string safeVersion = data.version;
-    std::replace(safeVersion.begin(), safeVersion.end(), '_', '-');
+    std::cout << "\n" << BOLD << CYAN << "--- BUILDING DEB: " << safePkgName << " ---" << RESET << "\n";
 
-    std::cout << "\n" << BOLD << CYAN << "--- BUILDING DEBIAN PACKAGE (.deb) : " << safePkgName << " ---" << RESET << "\n";
+    // FIX: Ensure Output Directory actually exists before doing anything!
+    try { fs::create_directories(data.outputDir); } catch (...) {}
 
     std::string relativeInstallDir = data.installDir;
     if (!relativeInstallDir.empty() && relativeInstallDir[0] == '/') relativeInstallDir.erase(0, 1);
-
-    try {
-        fs::create_directories(data.outputDir);
-    } catch (const fs::filesystem_error& e) {
-        printError("Failed to create output directory! Permission denied or invalid path: " + data.outputDir);
-        return;
-    }
-
     std::string buildDir = data.outputDir + "/" + safePkgName + "_" + safeVersion + "_" + data.arch;
-
-    printStep("Creating directory hierarchy in " + data.outputDir);
     try {
         fs::create_directories(buildDir + "/DEBIAN");
         fs::create_directories(buildDir + "/" + relativeInstallDir);
-    } catch (const fs::filesystem_error& e) {
-        printError("Failed to create build hierarchy! Check permissions.");
-        return;
-    }
 
-    printStep("Writing control file");
-    std::ofstream controlFile(buildDir + "/DEBIAN/control");
-    controlFile << "Package: " << safePkgName << "\n";
-    controlFile << "Version: " << safeVersion << "\n";
-    controlFile << "Architecture: " << data.arch << "\n";
-    controlFile << "Maintainer: " << data.maintainer << "\n";
-    if (!data.description.empty()) {
-        controlFile << "Description: " << data.description << "\n";
-    }
-    controlFile << "\n";
-    controlFile.close();
+        // FIX: Calculate Installed-Size for APT package manager metadata.
+        std::uintmax_t fileSize = fs::file_size(data.binaryPath);
+        std::uintmax_t installedSizeKB = (fileSize / 1024) + 1;
 
-    printStep("Generating copyright/license file");
-    std::string docDir = buildDir + "/usr/share/doc/" + safePkgName;
-    fs::create_directories(docDir);
+        std::ofstream control(buildDir + "/DEBIAN/control");
+        // Added double newline at the end of control file to prevent EOF parsing bugs.
+        control << "Package: " << safePkgName << "\nVersion: " << safeVersion << "\nArchitecture: " << data.arch
+        << "\nMaintainer: " << data.maintainer << "\nInstalled-Size: " << installedSizeKB
+        << "\nDescription: " << data.description << "\n\n";
+        control.close();
 
-    std::ofstream copyrightFile(docDir + "/copyright");
-    copyrightFile << "Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/\n";
-    copyrightFile << "Upstream-Name: " << safePkgName << "\n\n";
-    copyrightFile << "Files: *\n";
-    copyrightFile << "Copyright: " << data.maintainer << "\n";
-    copyrightFile << "License: " << data.authMeta.license << "\n";
-    copyrightFile.close();
+        std::string target = buildDir + "/" + relativeInstallDir + "/" + data.pkgName;
+        fs::copy_file(data.binaryPath, target, fs::copy_options::overwrite_existing);
+        fs::permissions(target, fs::perms::owner_all | fs::perms::group_read | fs::perms::group_exec | fs::perms::others_read | fs::perms::others_exec);
+        std::string finalPath = data.outputDir + "/" + safePkgName + "_" + safeVersion + "_" + data.arch + ".deb";
 
-    printStep("Copying binary to target");
-    try {
-        std::string targetBinary = buildDir + "/" + relativeInstallDir + "/" + data.pkgName;
-        fs::copy_file(data.binaryPath, targetBinary, fs::copy_options::overwrite_existing);
-        fs::permissions(targetBinary, fs::perms::owner_all | fs::perms::group_read | fs::perms::group_exec | fs::perms::others_read | fs::perms::others_exec);
-    } catch (const fs::filesystem_error& e) {
-        printError("Failed to copy binary! Check the path: " + data.binaryPath);
-        return;
-    }
-
-    printStep("Running dpkg-deb");
-    std::string buildCmd = "dpkg-deb --build " + escapeShellArg(buildDir);
-    int result = std::system(buildCmd.c_str());
-
-    if (result == 0) {
-        printStep("Cleaning up temporary files");
+        int ret = std::system(("dpkg-deb --build " + escapeShellArg(buildDir) + " " + escapeShellArg(finalPath)).c_str());
         fs::remove_all(buildDir);
-        std::string finalDebPath = buildDir + ".deb";
-        printSuccess("Debian package successfully built: " + finalDebPath);
 
-        if (!isBatch) {
-            promptMovePackage(finalDebPath);
+        if (ret == 0) {
+            printSuccess("DEB Created: " + finalPath);
+        } else {
+            printError("DEB build failed. Check if dpkg-deb is installed.");
         }
-    } else {
-        printError("dpkg-deb failed during package creation.");
-        fs::remove_all(buildDir);
-    }
+    } catch (...) { printError("DEB build failed."); fs::remove_all(buildDir); }
 }
 
-void buildRPM(const PackageData& data, bool isBatch = false) {
-    std::string safeVersion = data.version;
-    std::replace(safeVersion.begin(), safeVersion.end(), '-', '_');
-    std::string safeRelease = data.release;
-    std::replace(safeRelease.begin(), safeRelease.end(), '-', '_');
+void buildRPM(const PackageData& data) {
+    std::cout << "\n" << BOLD << YELLOW << "--- BUILDING RPM: " << data.pkgName << " ---" << RESET << "\n";
 
-    std::cout << "\n" << BOLD << YELLOW << "--- BUILDING RPM PACKAGE (.rpm) : " << data.pkgName << " ---" << RESET << "\n";
+    // FIX: Ensure Output Directory actually exists!
+    try { fs::create_directories(data.outputDir); } catch (...) {}
+
+    // FIX: Use system's true temp directory instead of hardcoded /tmp for maximum compatibility/security.
+    std::string timestamp = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
+    std::string workspace = (fs::temp_directory_path() / (data.pkgName + "_rpm_workspace_" + timestamp)).string();
 
     try {
-        fs::create_directories(data.outputDir);
-    } catch (const fs::filesystem_error& e) {
-        printError("Failed to create output directory!");
-        return;
-    }
-
-    std::string workspace = data.outputDir + "/" + data.pkgName + "_rpm_workspace";
-
-    printStep("Preparing RPM workspace");
-    try {
-        fs::create_directories(workspace + "/BUILD");
-        fs::create_directories(workspace + "/RPMS");
         fs::create_directories(workspace + "/SOURCES");
         fs::create_directories(workspace + "/SPECS");
-        fs::create_directories(workspace + "/SRPMS");
-    } catch (const fs::filesystem_error& e) {
-        printError("Failed to create RPM workspace hierarchy!");
-        return;
-    }
+        fs::copy_file(data.binaryPath, workspace + "/SOURCES/" + data.binaryName, fs::copy_options::overwrite_existing);
+        std::string spec = workspace + "/SPECS/" + data.pkgName + ".spec";
+        std::ofstream specF(spec);
 
-    printStep("Copying source binary to SOURCES");
-    fs::copy_file(data.binaryPath, workspace + "/SOURCES/" + data.binaryName, fs::copy_options::overwrite_existing);
+        specF << "Name: " << data.pkgName << "\nVersion: " << data.version << "\nRelease: " << data.release
+        << "\nSummary: " << data.description << "\nLicense: " << data.license << "\nPackager: " << data.maintainer
+        << "\n%description\n" << data.description << "\n%install\nmkdir -p \"%{buildroot}" << data.installDir
+        << "\"\ninstall -m 755 \"%{_sourcedir}/" << data.binaryName << "\" \"%{buildroot}" << data.installDir
+        << "/" << data.pkgName << "\"\n%files\n";
 
-    std::string specPath = workspace + "/SPECS/" + data.pkgName + ".spec";
-    printStep("Writing SPEC file");
-
-    std::ofstream specFile(specPath);
-    specFile << "Name:           " << data.pkgName << "\n";
-    specFile << "Version:        " << safeVersion << "\n";
-    specFile << "Release:        " << safeRelease << "%{?dist}\n";
-    specFile << "Source0:        " << data.binaryName << "\n";
-    specFile << "Summary:        " << (data.description.empty() ? data.pkgName + " package" : data.description) << "\n\n";
-    specFile << "License:        " << data.authMeta.license << "\n";
-    specFile << "Packager:       " << data.maintainer << "\n\n";
-    specFile << "%description\n" << (data.description.empty() ? data.pkgName + " package" : data.description) << "\n\n";
-
-    specFile << "%prep\n";
-    specFile << "cp \"%{SOURCE0}\" .\n\n";
-    specFile << "%build\n\n";
-    specFile << "%install\n";
-    specFile << "mkdir -p \"%{buildroot}" << data.installDir << "\"\n";
-    specFile << "install -m 755 \"" << data.binaryName << "\" \"%{buildroot}" << data.installDir << "/" << data.pkgName << "\"\n\n";
-    specFile << "%files\n";
-    specFile << "\"" << data.installDir << "/" << data.pkgName << "\"\n\n";
-    specFile.close();
-
-    printStep("Running rpmbuild");
-    std::string currentPath = fs::absolute(workspace).string();
-    std::string buildCmd = "rpmbuild --define '_topdir " + currentPath + "' -bb " + escapeShellArg(specPath);
-
-    int result = std::system(buildCmd.c_str());
-
-    if (result == 0) {
-        printStep("Extracting RPM and cleaning up workspace");
-        bool rpmFound = false;
-        std::string finalRpmPath = "";
-
-        for (const auto& entry : fs::recursive_directory_iterator(workspace + "/RPMS")) {
-            if (entry.is_regular_file() && entry.path().extension() == ".rpm") {
-                finalRpmPath = data.outputDir + "/" + entry.path().filename().string();
-                fs::copy_file(entry.path(), finalRpmPath, fs::copy_options::overwrite_existing);
-                rpmFound = true;
-            }
+        // FIX: Prevent orphan directories on uninstall by taking ownership of custom install directories.
+        if (!isStandardDir(data.installDir)) {
+            specF << "%dir \"" << data.installDir << "\"\n";
         }
-        fs::remove_all(workspace);
 
-        if (rpmFound) {
-            printSuccess("RPM package successfully built!");
-            if (!isBatch) {
-                promptMovePackage(finalRpmPath);
+        specF << "\"" << data.installDir << "/" << data.pkgName << "\"\n\n";
+        specF.close();
+
+        std::string defineArg = "_topdir " + (std::string)fs::absolute(workspace);
+        if (std::system(("rpmbuild --define " + escapeShellArg(defineArg) + " -bb " + escapeShellArg(spec)).c_str()) == 0) {
+            for (const auto& entry : fs::recursive_directory_iterator(workspace + "/RPMS")) {
+                if (entry.path().extension() == ".rpm") {
+                    fs::copy_file(entry.path(), data.outputDir + "/" + entry.path().filename().string(), fs::copy_options::overwrite_existing);
+                }
             }
+            printSuccess("RPM Created in: " + data.outputDir);
         } else {
-            printError("RPM build finished but no .rpm file was found!");
+            printError("RPM build failed. Check spec or rpmbuild tools.");
         }
-    } else {
-        printError("rpmbuild failed.");
         fs::remove_all(workspace);
-    }
+    } catch (...) { printError("RPM build failed."); fs::remove_all(workspace); }
 }
 
-void batchPackagingMenu() {
+std::vector<std::string> extractPaths(const std::string& input) {
+    std::vector<std::string> paths;
+    std::string current = "";
+    bool inQuotes = false, escaped = false;
+    for (char c : input) {
+        if (escaped) { current += c; escaped = false; }
+        else if (c == '\\') escaped = true;
+        else if (c == '"' || c == '\'') inQuotes = !inQuotes;
+        else if (!inQuotes && std::isspace(c)) { if (!current.empty()) { paths.push_back(current); current = ""; } }
+        else current += c;
+    }
+    if (!current.empty()) paths.push_back(current);
+    return paths;
+}
+
+void forgePackages() {
     clearScreen();
-    std::cout << BOLD << BLUE << "=================================================\n" << RESET;
-    std::cout << BOLD << GREEN << "             BATCH PACKAGING MODE\n" << RESET;
-    std::cout << BOLD << BLUE << "=================================================\n\n" << RESET;
+    std::cout << BOLD << BLUE << "=================================================\n" << "      FORGE PACKAGES (DRAG & DROP)\n" << "=================================================\n\n" << RESET;
 
-    std::cout << BOLD << "Which package types do you want to create?\n" << RESET;
-    std::cout << "  [" << GREEN << "1" << RESET << "] Only DEB\n";
-    std::cout << "  [" << YELLOW << "2" << RESET << "] Only RPM\n";
-    std::cout << "  [" << CYAN << "3" << RESET << "] Both (DEB + RPM)\n";
-
-    std::string typeChoice = askInput("Your choice", true, false, true);
-    bool buildDeb = (typeChoice == "1" || typeChoice == "3");
-    bool buildRpm = (typeChoice == "2" || typeChoice == "3");
-
-    if (!buildDeb && !buildRpm) {
-        printError("Invalid choice. Batch packaging aborted.");
-        return;
+    std::string type;
+    while (true) {
+        type = askInput("Type [1:DEB, 2:RPM, 3:Both]", true);
+        if (type == "1" || type == "2" || type == "3") break;
+        printError("Invalid choice. Please enter 1, 2, or 3.");
     }
 
+    bool bDeb = (type == "1" || type == "3"), bRpm = (type == "2" || type == "3");
     std::vector<std::string> binaryPaths;
-
     while (true) {
         clearScreen();
-        std::cout << BOLD << CYAN << "--- ADDED FILES ---\n" << RESET;
-        if (binaryPaths.empty()) {
-            std::cout << YELLOW << "  No files added yet.\n" << RESET;
-        } else {
-            for (size_t i = 0; i < binaryPaths.size(); ++i) {
-                std::cout << "  " << GREEN << (i + 1) << ". " << RESET << binaryPaths[i] << "\n";
-            }
+        std::cout << BOLD << CYAN << "--- FILES ---\033[40G" << RED << "(!cancel to return to main menu)\n" << RESET;
+        for (const auto& p : binaryPaths) std::cout << "  - " << p << "\n";
+        std::string input = askInput("\nDrag file(s) or type 'confirm'", true);
+        if (toLower(input) == "confirm") { if (binaryPaths.empty()) continue; break; }
+        for (std::string p : extractPaths(input)) {
+            p = expandTilde(trimPath(p));
+            if (fs::is_regular_file(p)) binaryPaths.push_back(p);
+            else printError("Invalid file: " + p);
         }
-        std::cout << "\n" << BOLD << "Please drag and drop the binary file here or enter its full path.\n";
-        std::cout << "Type '" << GREEN << "confirm" << RESET << "' and press ENTER to confirm and proceed to questions.\n" << RESET;
-
-        std::string input = askInput("File Path or 'confirm'", true, false, true);
-
-        if (input == "confirm" || input == "CONFIRM") {
-            if (binaryPaths.empty()) {
-                printError("You haven't added any files! Type 'p' to cancel.");
-                sleepMs(1500);
-                continue;
-            }
-            break;
-        }
-
-        std::string expandedPath = expandTilde(input);
-        if (fs::is_regular_file(expandedPath)) {
-            if (std::find(binaryPaths.begin(), binaryPaths.end(), expandedPath) != binaryPaths.end()) {
-                printError("This file is already added to the list!");
-                sleepMs(1500);
-            } else {
-                binaryPaths.push_back(expandedPath);
-                printSuccess("File added to the list!");
-                sleepMs(600);
-            }
-        } else {
-            printError("File not found! Check the path.");
-            sleepMs(1500);
-        }
+        sleepMs(500);
     }
-
-    std::vector<PackageData> packagesToBuild;
-    for (const auto& path : binaryPaths) {
-        packagesToBuild.push_back(gatherPackageInfo(path, buildDeb, buildRpm));
-    }
-
-    std::cout << "\n" << BOLD << GREEN << ">>> ALL INFORMATION RECEIVED. STARTING BUILD... <<<" << RESET << "\n";
-    sleepMs(1000);
-
-    for (const auto& data : packagesToBuild) {
-        if (buildDeb) buildDebian(data, true);
-        if (buildRpm) buildRPM(data, true);
-    }
-
-    printSuccess("Batch packaging process completed!");
-}
-
-void installTools() {
-    std::cout << "\n" << BOLD << CYAN << "--- INSTALLING REQUIRED TOOLS ---" << RESET << "\n";
-    bool hasApt = (std::system("command -v apt > /dev/null 2>&1") == 0);
-    bool hasDnf = (std::system("command -v dnf > /dev/null 2>&1") == 0);
-    bool hasPacman = (std::system("command -v pacman > /dev/null 2>&1") == 0);
-
-    int result = -1;
-
-    if (hasApt) {
-        printStep("Debian/Ubuntu/MX Linux detected");
-        result = std::system("sudo apt update && sudo apt install -y dpkg rpm");
-    } else if (hasDnf) {
-        printStep("Fedora/RHEL detected");
-        result = std::system("sudo dnf install -y rpm-build dpkg");
-    } else if (hasPacman) {
-        printStep("Arch Linux detected");
-        result = std::system("sudo pacman -Sy --noconfirm rpm-tools dpkg");
-    } else {
-        printError("No supported package manager found.");
-        return;
-    }
-
-    if (result == 0) {
-        printSuccess("All required tools installed successfully!");
-    } else {
-        printError("Some packages may have failed to install.");
-    }
-}
-
-void printOutro() {
-    std::cout << "\n" << BOLD << BLUE << "=================================================\n" << RESET;
-    std::cout << BOLD << GREEN << "  Thank you for using Package Forge!\n" << RESET;
-    std::cout << CYAN << "  Created by: Neuwj\n" << RESET;
-    std::cout << BOLD << BLUE << "=================================================\n\n" << RESET;
+    SessionCache cache;
+    std::vector<PackageData> packages;
+    for (const auto& p : binaryPaths) packages.push_back(gatherPackageInfo(p, bDeb, bRpm, cache));
+    for (const auto& d : packages) { if (bDeb) buildDebian(d); if (bRpm) buildRPM(d); }
+    printSuccess("Forge complete!");
 }
 
 int main() {
+    std::signal(SIGINT, signalHandler);
     while(true) {
         try {
             printBanner();
-
-            std::cout << BOLD << "Which armor (package) do you want to forge, knight?\n" << RESET;
-            std::cout << "  [" << GREEN << "1" << RESET << "] Debian / Ubuntu  (" << GREEN << ".deb" << RESET << ")\n";
-            std::cout << "  [" << YELLOW << "2" << RESET << "] Fedora / RedHat (" << YELLOW << ".rpm" << RESET << ")\n";
-            std::cout << "  [" << CYAN << "3" << RESET << "] Batch Packaging Mode (" << BOLD << "NEW" << RESET << ")\n";
-            std::cout << "  [" << BLUE << "4" << RESET << "] Install Required Tools (dpkg, rpmbuild, etc.)\n";
-            std::cout << "  [" << YELLOW << "0" << RESET << "] Open Example Guide\n";
-            std::cout << "  [" << RED << "q" << RESET << "] Exit\n\n";
-
-            std::string choice = askInput("Choice", true, false, true);
-
-            if (choice == "1") {
-                std::string binPath = askInput("Binary Path", true, false, false, true);
-                PackageData data = gatherPackageInfo(binPath, true, false);
-                buildDebian(data);
-                waitForEnter();
-            } else if (choice == "2") {
-                std::string binPath = askInput("Binary Path", true, false, false, true);
-                PackageData data = gatherPackageInfo(binPath, false, true);
-                buildRPM(data);
-                waitForEnter();
-            } else if (choice == "3") {
-                batchPackagingMenu();
-                waitForEnter();
-            } else if (choice == "4") {
-                installTools();
-                waitForEnter();
-            } else if (choice == "0") {
-                openGuide();
-            } else if (choice == "q" || choice == "Q") {
-                std::cout << "\nClosing the forge. See you later!\n";
-                break;
-            } else {
-                printError("Invalid choice! Please enter one of the numbers from the menu.");
-                sleepMs(1000);
-            }
-
+            std::cout << "  [1] Forge Packages (Drag & Drop)\n  [2] Install Tools\n  [0] Guide\n  [q] Quit\n\n";
+            std::string choice = toLower(askInput("Your Choice", true));
+            if (choice == "1") forgePackages();
+            else if (choice == "2") std::system("sudo apt update && sudo apt install -y dpkg rpm rpm-build");
+            else if (choice == "0") openGuide();
+            else if (choice == "q") break;
+            waitForEnter();
         } catch (const AbortOperation&) {
-            std::cout << "\n" << RED << BOLD << "[!] Operation Cancelled. Returning to the main menu..." << RESET << "\n";
-            sleepMs(1200);
+            std::cout << "\n" << RED << "[!] Aborted. Back to menu..." << RESET << "\n";
+            sleepMs(1000);
         }
     }
-
-    printOutro();
     return 0;
 }

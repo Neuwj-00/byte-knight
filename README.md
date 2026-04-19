@@ -46,16 +46,6 @@ The "Forge" series consists of three core engines that drive the production and 
 | **`pacForge`** | C++ | The Builder | The production heart of the ecosystem. Takes raw source code or binaries and converts them into professional, signed `.deb` and `.rpm` packages — the most optimized path from "code to package." |
 | **`repoForge`** | C++ | The Distributor | The brain of the distribution center. Manages the repository hierarchy, generates APT/DNF metadata indexes (`Packages.gz`, `repomd.xml`), and handles GPG signing protocols. |
 | **`gitForge`** | Rust | The Automator | A high-performance bridge that automates development and deployment workflows — Git operations, versioning, and CI/CD pipelines — ensuring all Forge components work in perfect harmony. |
-
-## System & Maintenance Modules
-
-| Tool | Language | Description |
-|------|----------|-------------|
-| **`warpcpp`** | C++ | A performance-oriented system utility designed for low-level optimization and high-speed process transitions. |
-| **`foldertree` / `ftr`** | C++ | A high-speed analysis tool that scans complex file systems and generates visual maps (HTML/Tree formats). |
-| **`uninstallerdeb`** | Python | A maintenance module that ensures clean and safe removal of packages, leaving no residues on the system. |
-| **`RepositoryInstaller`** | Shell | A user-friendly script that imports GPG keys and configures the repository on the target system with a single command. |
-
 ---
 
 ## Installation
